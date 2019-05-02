@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">O(n)Cache</string>
     <string name="action_settings">Settings</string>
+    <string name="strUiMainFrag">Cache tester</string>
+    <string name="strCaseCaption">Test case:</string>
+    <string name="strResultCaption">Test results:</string>
+    <string name="strResult_nothing">The test was not conducted yet..</string>
+    <string name="strResult_stopped">The test was stopped..</string>
 </resources>

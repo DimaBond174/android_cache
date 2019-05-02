@@ -4,7 +4,7 @@
 extern "C" JNIEXPORT jstring
 
 JNICALL
-Java_com_bond_oncache_MainActivity_stringFromJNI(
+Java_com_bond_oncache_TestPresenter_stringFromJNI(
     JNIEnv *env,
     jobject /* this */) {
   std::string hello = "Hello from C++";
