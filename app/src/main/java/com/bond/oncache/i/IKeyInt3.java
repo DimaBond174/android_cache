@@ -1,6 +1,6 @@
 package com.bond.oncache.i;
 
-public class IKeyInt3 {
+public class IKeyInt3  implements  IKey {
   public final int  k1;
   public final int  k2;
   public final int  k3;
@@ -29,6 +29,7 @@ public class IKeyInt3 {
     return hash;
   }
 
+  @Override
   public int  cmp(Object o)  {
     if (this == o)  return  0;
     IKeyInt3 other = (IKeyInt3) o;
@@ -41,7 +42,9 @@ public class IKeyInt3 {
     return 0;
   }
 
+  @Override
   public long get_hash()  {
-    return  k1  +  k2  +  k3;
+    long  re  = k1  +  k2  +  k3;
+    return  re >= 0? re : - re;
   }
 }

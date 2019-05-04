@@ -1,19 +1,19 @@
 package com.bond.oncache.testers;
 
+import android.support.v4.util.LruCache;
+
 import com.bond.oncache.i.IKeyInt3;
 import com.bond.oncache.i.ITester;
-
-import java.util.Map;
-
 import com.bond.oncache.objs.TJsonToCfg;
 import com.google.common.cache.CacheBuilder;
 
 /**
- * Google Guava
- * https://github.com/google/guava
+ * Android LruCache
+ * https://developer.android.com/reference/android/util/LruCache
  */
-public class TGuavaCacheKeyInt3 implements ITester {
-  com.google.common.cache.Cache<IKeyInt3,  IKeyInt3>  cache  =  null;
+public class TAndroidLRUKeyInt3 implements ITester {
+  LruCache<IKeyInt3,  IKeyInt3> cache  =  null;
+
 
   @Override
   public boolean amThreadSafe() {
@@ -22,9 +22,7 @@ public class TGuavaCacheKeyInt3 implements ITester {
 
   @Override
   public void onStart(int capacity, TJsonToCfg cfg) {
-    cache  =  CacheBuilder.newBuilder()
-        .maximumSize(capacity)
-        .build();
+    cache  =  new LruCache<IKeyInt3,  IKeyInt3>(capacity);
   }
 
   @Override
@@ -42,12 +40,12 @@ public class TGuavaCacheKeyInt3 implements ITester {
   @Override
   public boolean exist(Object elem) {
     if (!(elem instanceof IKeyInt3)) return  false;
-    return  null  !=  cache.getIfPresent((IKeyInt3) elem);
+    return  null  !=  cache.get((IKeyInt3) elem);
   }
 
   @Override
   public String get_algorithm_name() {
-    return "Java.TGuava";
+    return "Java.TAndroidLRU";
   }
 
   @Override

@@ -1,9 +1,10 @@
 package com.bond.oncache.i;
 
-import java.util.Map;
+import com.bond.oncache.objs.TJsonToCfg;
+
 
 public interface ITester {
-  void  onStart(Map<String, String>  cfg);
+  void  onStart(int capacity, TJsonToCfg cfg);
   void  onStop();
   void  insert(Object  elem);
   boolean  exist(Object  elem);
@@ -20,4 +21,6 @@ public interface ITester {
    *  Java impl or CPP impl
    */
   boolean amJavaTester();
+
+  boolean amThreadSafe();
 }

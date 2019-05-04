@@ -31,7 +31,7 @@ public abstract class UiFragment extends FrameLayout implements View.OnClickList
 
     public abstract String getTitle();
 
-
+    public abstract void onPresenterChange();
 
 //    public abstract void setAnswerMessage(MsgTemplate msg);
 //

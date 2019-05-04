@@ -1,13 +1,17 @@
 package com.bond.oncache;
 
-import android.content.Context;
-import android.util.Log;
 
+import android.util.Log;
 import com.bond.oncache.cases.*;
 import com.bond.oncache.i.ITestCase;
 import com.bond.oncache.i.ITester;
 import com.bond.oncache.i.IView;
+import com.bond.oncache.objs.TJsonToCfg;
 import com.bond.oncache.testers.*;
+
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /*
  *  MVP presenter
@@ -17,16 +21,21 @@ public class TestPresenter {
   /////////////////////////////////////////////////////////////////
   // public for GUI single thread, thread unsafe:
   public static void  setGUInterface(IView  iView) {
-    curActivity  =  iView;
-    guiOnScreen  =  true;
+    cur_activity  =  iView;
+    gui_on_screen  =  true;
+    if  (null == getConfig())  {
+      TJsonToCfg cfg  =  new TJsonToCfg();
+      cfg.setDefaultTestCase();
+      setConfig(cfg);
+    }
   }
 
   public static IView getGUInterface()  {
-    return  curActivity;
+    return  cur_activity;
   }
 
   public static void onGUIstop()  {
-    guiOnScreen  =  false;
+    gui_on_screen  =  false;
   }
 
   public static String getRstring(int  id)  {
@@ -39,9 +48,77 @@ public class TestPresenter {
 
   /////////////////////////////////////////////////////////////////
   // public for multi thread, thread safe:
-  public static volatile boolean  guiOnScreen  =  false;
+  public static volatile boolean  gui_on_screen  =  false;
+
+  public  static void  setSettings(String  json) {
+    stopProgress();
+  }
+
+  public static int  getProgress() {  return progress; }
+
+  public static void  stopProgress()  {
+    try {
+      if (null != cur_test_case) {
+        cur_test_case.stop();
+      }
+      progress = 0;
+    } catch (Exception e) {
+      Log.e(TAG, "stopProgress  error:", e);
+    }
+
+    progress  =  0;
+  }
+
+  public static void  setProgress(int  progress_)  {
+    progress  =  progress_;
+    runOnGUIthread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          cur_activity.onPresenterChange();
+        } catch (Exception e) {}
+      }
+    });
+  }
+
+
+  public static void  startProgress()  {
+    if  (0 != progress)  {   return;  }
+    TJsonToCfg cfg  =  getConfig();
+    if  (null  ==  cfg ||  !cfg.is_valid)  {
+      try {
+        cur_activity.showMessage(getRstring(R.string.strConfig_error));
+      } catch (Exception e) {}
+      return;
+    }
+    w_Cfg_Lock.lock();
+    try {
+      cur_test_case  =  cfg.getCase();
+      if  (cur_test_case.startTestCase(cfg))  {
+        progress  =  1;
+        cur_activity.onPresenterChange();
+      }  else {
+        cur_activity.showMessage(getRstring(R.string.strTestCase_fail));
+      }
+    } catch (Exception e) {}
+    w_Cfg_Lock.unlock();
+  }
+
+  public static TJsonToCfg getConfig() {
+    r_Cfg_Lock.lock();
+    TJsonToCfg  re  =  cfg;
+    r_Cfg_Lock.unlock();
+    return  re;
+  }
+
+  public  static void setConfig(TJsonToCfg  jsonToCfg) {
+    w_Cfg_Lock.lock();
+    cfg  =  jsonToCfg;
+    w_Cfg_Lock.unlock();
+  }
+
   public static void runOnGUIthread (Runnable r) {
-    if (guiOnScreen) {
+    if (gui_on_screen) {
       try {
         IView gui = getGUInterface();
         if (null  !=  gui)  {
@@ -56,22 +133,22 @@ public class TestPresenter {
   //  Private Incapsulation :
   /////////////////////////////////////////////////////////////////
   // private for GUI single thread, thread unsafe:
-  static IView curActivity  =  null;
+  static IView cur_activity  =  null;
 
 
   /////////////////////////////////////////////////////////////////
   // private for multi thread, thread safe:
   private static final String TAG = "TestPresenter";
-  private static final ITester[] testers = new ITester[]{
-      //new TCaffeineKeyInt3(),
-      new TGuavaCacheKeyInt3()
-  };
-
-  private static final ITestCase[] cases = new ITestCase[]{
-      new CaseKeyInt3()
-  };
+  static volatile int progress  =  0;  // !=0 if test is process
 
 
+  ////////////////
+  static final ReentrantReadWriteLock rw_Cfg_Lock  =  new ReentrantReadWriteLock();
+  static final Lock r_Cfg_Lock = rw_Cfg_Lock.readLock();
+  static final Lock w_Cfg_Lock = rw_Cfg_Lock.writeLock();
+  static volatile  TJsonToCfg cfg  =  null;
+  static volatile  ITestCase cur_test_case  =  null;
+  ////////////////
 
   /*
   *   NDK staff

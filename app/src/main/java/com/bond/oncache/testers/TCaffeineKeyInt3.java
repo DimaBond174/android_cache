@@ -2,6 +2,7 @@ package com.bond.oncache.testers;
 
 import com.bond.oncache.i.IKeyInt3;
 import com.bond.oncache.i.ITester;
+import com.bond.oncache.objs.TJsonToCfg;
 //import com.github.benmanes.caffeine.cache.Caffeine;
 
 import java.util.Map;
@@ -18,13 +19,14 @@ import java.util.Map;
 public class TCaffeineKeyInt3 implements ITester {
   //com.github.benmanes.caffeine.cache.Cache<IKeyInt3,  IKeyInt3>  cache  =  null;
 
+
   @Override
-  public void onStart(Map<String, String>  cfg) {
-    int capacity  =  100;
-    String str_capacity  =  cfg.get("capacity");
-    if (null  !=  str_capacity) {
-      capacity  =  Integer.getInteger(str_capacity);
-    }
+  public boolean amThreadSafe() {
+    return true;
+  }
+
+  @Override
+  public void onStart(int capacity, TJsonToCfg cfg) {
 //    cache  =  Caffeine.newBuilder()
 //        .maximumSize(capacity)
 //        .build();

@@ -7,4 +7,6 @@ public interface IView {
   void  setToolbarTittle(String  tittle);
   Handler getGuiHandler();
   Context  getForDialogCtx();
+  void  showMessage(String  str);
+  void  onPresenterChange();
 }

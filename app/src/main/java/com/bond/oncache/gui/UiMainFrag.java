@@ -2,6 +2,7 @@ package com.bond.oncache.gui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -12,6 +13,9 @@ import android.widget.TextView;
 
 import com.bond.oncache.R;
 import com.bond.oncache.TestPresenter;
+import com.bond.oncache.i.ITester;
+import com.bond.oncache.objs.StaticConsts;
+import com.bond.oncache.objs.TJsonToCfg;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -20,6 +24,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class UiMainFrag extends UiFragment   {
   public static final String TAG = "UiMainFrag";
@@ -29,23 +34,22 @@ public class UiMainFrag extends UiFragment   {
   InnerPapirus innerPapirus;
   OuterPapirus outerPapirus;
   TextView txt_case_caption;
+  WJsonConfig wJsonConfig;
   TextView txt_result_caption;
-  TextView txt_json[] = null;
-  TextView txt_result;
+
   com.github.mikephil.charting.charts.LineChart chart;
   WSimpleTable  simple_table;
 
   @Override
   public void onDestroy() {
     removeAllViews();
+    wJsonConfig = null;
     scrollView = null;
     scrollViewTable = null;
     innerPapirus = null;
     outerPapirus = null;
     txt_case_caption = null;
     txt_result_caption = null;
-    txt_json = null;
-    txt_result = null;
   }
 
 
@@ -72,6 +76,9 @@ public class UiMainFrag extends UiFragment   {
     txt_case_caption.setText(TestPresenter.getRstring(R.string.strCaseCaption));
     outerPapirus.addView(txt_case_caption);
 
+    wJsonConfig = new WJsonConfig(context);
+    outerPapirus.addView(wJsonConfig);
+
     txt_result_caption = new TextView(context);
     txt_result_caption.setSingleLine(true);
     txt_result_caption.setMaxLines(1);
@@ -80,13 +87,6 @@ public class UiMainFrag extends UiFragment   {
     txt_result_caption.setText(TestPresenter.getRstring(R.string.strResultCaption));
     outerPapirus.addView(txt_result_caption);
 
-    txt_result = new TextView(context);
-    txt_result.setSingleLine(true);
-    txt_result.setMaxLines(1);
-    txt_result.setTextSize(TypedValue.COMPLEX_UNIT_DIP, SpecTheme.InfoTextSize);
-    txt_result.setTextColor(SpecTheme.STextColor);
-    txt_result.setText(TestPresenter.getRstring(R.string.strResult_nothing));
-    outerPapirus.addView(txt_result);
 
     simple_table  =  new WSimpleTable(context,  SpecTheme.KeyBoardColor, SpecTheme.PTextColor);
     outerPapirus.addView(simple_table);
@@ -114,6 +114,7 @@ public class UiMainFrag extends UiFragment   {
 
     // if disabled, scaling can be done on x- and y-axis separately
     chart.setPinchZoom(false);
+    chart.setBackgroundColor(SpecTheme.KeyBoardColor);
     innerPapirus.addView(chart);
 
     addView(scrollView, new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -238,6 +239,7 @@ public class UiMainFrag extends UiFragment   {
   @Override
   public void onResume() {
     super.onResume();
+    wJsonConfig.setConfig();
 
   }
 
@@ -246,6 +248,97 @@ public class UiMainFrag extends UiFragment   {
     super.onStop();
   }
 
+
+  @Override
+  public void onPresenterChange() {
+    //TODO progress bar
+    int progress  =  TestPresenter.getProgress();
+    if (100 == progress) {
+      //Data ready , draw
+      prepareChart();
+    }  else if (0 == progress) {
+      //No Data - hide table
+      clearData();
+    }  else  {
+      //Update progress bar
+      updateProgress();
+    }
+  }
+
+  void  prepareChart() {
+    clearData();
+    TJsonToCfg  cfg  =  TestPresenter.getConfig();
+    if (null ==  cfg  ||  !cfg.is_valid)  return;
+    try {
+      ArrayList<ITester> testers = cfg.getTesters();
+      Map<ITester, ArrayList<Entry>> results  =  cfg.getResults();
+      int len_testers  =  testers.size();
+      ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+      int len_results = 0;
+      for (int  i  =  0;  i <  len_testers;  ++i)  {
+        ITester cur_tester  =  testers.get(i);
+        if (null == cur_tester)  continue;
+        ArrayList<Entry> values  =  results.get(cur_tester);
+        if (null == values)  continue;
+        if (values.size()  >  len_results)  {  len_results =  values.size();  }
+        LineDataSet d = new LineDataSet(values, cur_tester.get_algorithm_name());
+        d.setLineWidth(2.5f);
+        d.setCircleRadius(4f);
+        int color = SpecTheme.color_array[i % SpecTheme.color_array.length];
+        d.setColor(color);
+        d.setCircleColor(color);
+        dataSets.add(d);
+      }
+      LineData data = new LineData(dataSets);
+      chart.setData(data);
+      String  table_data[][] = new String[len_testers + 1][len_results + 1];
+      int  table_colors[]  =  new int[len_testers + 1];
+      table_colors[0]  = SpecTheme.PBlackColor;
+      table_data[0][0] = "Test in micro sec";
+      int  cur_items_mult  =  1;
+      StringBuilder sb = new StringBuilder(32);
+      for (int  j  =  0;  j <  len_results;  ++j)  {
+        int  cur_max_items = StaticConsts.START_ITEMS  *  cur_items_mult;
+        sb.append(cur_max_items);
+        if  (cur_items_mult  >  1) {
+          sb.append('/').append(cur_items_mult);
+        }
+        table_data[0][j + 1] = sb.toString();
+        cur_items_mult *= 10;
+        sb.setLength(0);
+      }
+
+      for (int  i  =  0;  i <  len_testers;  ++i)  {
+        table_colors[i + 1]  = SpecTheme.color_array[i % SpecTheme.color_array.length];
+        ITester cur_tester  =  testers.get(i);
+        if (null == cur_tester)  continue;
+        table_data[i + 1][0] = cur_tester.get_algorithm_name();
+        ArrayList<Entry> values  =  results.get(cur_tester);
+        if (null == values)  continue;
+        for (int  j  =  0;  j <  len_results;  ++j)  {
+          int  val  =  (int)values.get(j).getY();
+          sb.setLength(0);
+          sb.append(val);
+          table_data[i + 1][j + 1] = sb.toString();
+        }
+      }
+      simple_table.setTable_data(table_data,  table_colors);
+      chart.invalidate();
+
+    } catch (Exception e) {
+      Log.e(TAG, "prepareChart() error: ", e);
+    }
+  }
+
+  void  clearData() {
+    chart.clear();
+    simple_table.clear();
+    chart.invalidate();
+  }
+
+  void  updateProgress() {
+
+  }
 
   private class OuterPapirus extends FrameLayout {
     public OuterPapirus(Context context) {

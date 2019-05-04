@@ -5,5 +5,9 @@
     <string name="strCaseCaption">Test case:</string>
     <string name="strResultCaption">Test results:</string>
     <string name="strResult_nothing">The test was not conducted yet..</string>
-    <string name="strResult_stopped">The test was stopped..</string>
+    <string name="strTest_try_start">Trying to start test..</string>
+    <string name="strTest_try_stop">Trying to STOP test..</string>
+    <string name="strConfig_error">Error while parsing JSON to config..</string>
+    <string name="strTestCase_fail">Fail to start test case..</string>
+    <string name="strFileNotExist">File not exists: </string>
 </resources>

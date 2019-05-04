@@ -1,30 +1,30 @@
 package com.bond.oncache.testers;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
+
+import com.bond.oncache.caches.OnCacheSMRU;
 import com.bond.oncache.i.IKeyInt3;
 import com.bond.oncache.i.ITester;
-
-import java.util.Map;
-
 import com.bond.oncache.objs.TJsonToCfg;
-import com.google.common.cache.CacheBuilder;
 
-/**
- * Google Guava
- * https://github.com/google/guava
- */
-public class TGuavaCacheKeyInt3 implements ITester {
-  com.google.common.cache.Cache<IKeyInt3,  IKeyInt3>  cache  =  null;
+
+public class TOnCacheSMRUKeyInt3 implements ITester {
+  OnCacheSMRU<IKeyInt3,  IKeyInt3> cache  =  null;
 
   @Override
   public boolean amThreadSafe() {
-    return true;
+    return false;
   }
 
   @Override
   public void onStart(int capacity, TJsonToCfg cfg) {
-    cache  =  CacheBuilder.newBuilder()
-        .maximumSize(capacity)
-        .build();
+    cache  =  new OnCacheSMRU<IKeyInt3,  IKeyInt3>(capacity, 10);
   }
 
   @Override
@@ -36,18 +36,18 @@ public class TGuavaCacheKeyInt3 implements ITester {
   public void insert(Object elem) {
     if (!(elem instanceof IKeyInt3)) return;
     IKeyInt3 key = (IKeyInt3) elem;
-    cache.put(key,  key);
+    cache.insertNode(key,  key);
   }
 
   @Override
   public boolean exist(Object elem) {
     if (!(elem instanceof IKeyInt3)) return  false;
-    return  null  !=  cache.getIfPresent((IKeyInt3) elem);
+    return  null  !=  cache.getData((IKeyInt3) elem);
   }
 
   @Override
   public String get_algorithm_name() {
-    return "Java.TGuava";
+    return "Java.OnCacheSMRU";
   }
 
   @Override

@@ -2,10 +2,13 @@ package com.bond.oncache;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements IView {
   static final String TAG = "MainActivity";
   final GuiHandler guiHandler = new GuiHandler(Looper.getMainLooper());
   Toolbar toolbar  =  null;
+  FloatingActionButton fab  =  null;
   static final String FirstFragTAG = "UiMainFrag";
   static final FragmentKey FirstFragKey = new FragmentKey(FirstFragTAG);
   final Map<FragmentKey,  UiFragment>  uiFrags  =  new HashMap<FragmentKey,UiFragment>();
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements IView {
   UiFragment curActiveFrag  =  null;
   MainWindow mainWindow  =  null;
   boolean guiNotStarted  =  true;
+  Drawable play_icon;
+  Drawable stop_icon;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements IView {
     toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    fab = (FloatingActionButton) findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
+        onFABclick(view);
       }
     });
 
@@ -62,6 +67,47 @@ public class MainActivity extends AppCompatActivity implements IView {
 //    tv.setText(TestPresenter.stringFromJNI());
     restoreState(savedInstanceState);
 //    onNewIntent(getIntent());
+    play_icon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_play_circle_outline_black_24dp);
+    play_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
+    stop_icon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_stop_black_24dp);
+    stop_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
+
+    setFABicon();
+  }
+
+  void setFABicon() {
+    int prog = TestPresenter.getProgress();
+    if  (0 == prog || 100 == prog)  {
+      fab.setImageDrawable(play_icon);
+    }  else {
+      fab.setImageDrawable(stop_icon);
+    }
+  }
+
+  void onFABclick(View view) {
+    //need for stop fab.hide();
+    if  (0 == TestPresenter.getProgress())  {
+      Snackbar.make(view, TestPresenter.getRstring(R.string.strTest_try_start), Snackbar.LENGTH_LONG)
+          .setAction("Action", null).show();
+      TestPresenter.startProgress();
+    }  else {
+      Snackbar.make(view, TestPresenter.getRstring(R.string.strTest_try_stop), Snackbar.LENGTH_LONG)
+          .setAction("Action", null).show();
+      TestPresenter.stopProgress();
+    }
+
+  }
+
+  @Override
+  public void onPresenterChange() {
+    setFABicon();
+    curActiveFrag.onPresenterChange();
+  }
+
+  @Override
+  public void showMessage(String str) {
+    Snackbar.make(fab, str, Snackbar.LENGTH_LONG)
+        .setAction("Action", null).show();
   }
 
   @Override

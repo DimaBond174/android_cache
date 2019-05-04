@@ -6,7 +6,6 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class WSimpleTable extends FrameLayout {
@@ -41,6 +40,12 @@ public class WSimpleTable extends FrameLayout {
         LayoutParams.MATCH_PARENT));
   }  // constructor
 
+  void clear() {
+    papirus.removeAllViews();
+    table  =  null;
+    cols_width  =  null;
+    requestLayout();
+  }
 
   void  setTable_data(String  table_data[][] ,  int  table_colors[] ) {
     papirus.removeAllViews();

@@ -1,13 +1,14 @@
 package com.bond.oncache.i;
 
-import java.util.Map;
+import com.bond.oncache.objs.TJsonToCfg;
+
 
 public interface ITestCase  {
-  boolean  prepareTestCase(Map<String, String>  cfg);
-  boolean  startTester(ITester  tester);
+  boolean  startTestCase(TJsonToCfg  cfg);
   void  stop();
 
   String  get_case_name();
+
 
   /*
    *  0 == IKeyInt3
