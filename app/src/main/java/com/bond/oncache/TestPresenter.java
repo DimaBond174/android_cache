@@ -61,12 +61,13 @@ public class TestPresenter {
       if (null != cur_test_case) {
         cur_test_case.stop();
       }
-      progress = 0;
+      progress  =  0;
+      cur_activity.onPresenterChange();
     } catch (Exception e) {
       Log.e(TAG, "stopProgress  error:", e);
     }
-
     progress  =  0;
+
   }
 
   public static void  setProgress(int  progress_)  {

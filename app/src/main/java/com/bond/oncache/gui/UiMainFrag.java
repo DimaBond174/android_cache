@@ -3,11 +3,18 @@ package com.bond.oncache.gui;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -34,6 +41,7 @@ public class UiMainFrag extends UiFragment   {
   InnerPapirus innerPapirus;
   OuterPapirus outerPapirus;
   TextView txt_case_caption;
+  ProgressBar progressBar;
   WJsonConfig wJsonConfig;
   TextView txt_result_caption;
 
@@ -50,6 +58,7 @@ public class UiMainFrag extends UiFragment   {
     outerPapirus = null;
     txt_case_caption = null;
     txt_result_caption = null;
+    progressBar = null;
   }
 
 
@@ -120,6 +129,27 @@ public class UiMainFrag extends UiFragment   {
     addView(scrollView, new LayoutParams(LayoutParams.MATCH_PARENT,
         LayoutParams.MATCH_PARENT));
     //add progress bar
+
+    progressBar  =  new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+    // Define a shape with rounded corners
+    final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
+    ShapeDrawable pgDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners,     null, null));
+    // Sets the progressBar color
+    pgDrawable.getPaint().setColor(SpecTheme.PForestGreenColorA);
+
+    // Adds the drawable to your progressBar
+    ClipDrawable progress = new ClipDrawable(pgDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
+    progressBar.setProgressDrawable(progress);
+
+    // Sets a background to have the 3D effect
+    Drawable draw_back_progress = SpecTheme.context.getResources()
+        .getDrawable(android.R.drawable.progress_horizontal);
+    draw_back_progress.setAlpha(77);
+    progressBar.setBackgroundDrawable(draw_back_progress);
+
+    progressBar.setVisibility(GONE);
+    addView(progressBar, new LayoutParams(LayoutParams.MATCH_PARENT,
+        LayoutParams.MATCH_PARENT));
 
     setChartData();
   }
@@ -212,8 +242,18 @@ public class UiMainFrag extends UiFragment   {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int width  =  MeasureSpec.getSize(widthMeasureSpec);
+    int height  =  MeasureSpec.getSize(heightMeasureSpec);
+    if (progressBar.getVisibility() == VISIBLE) {
+      progressBar.measure(
+          MeasureSpec.makeMeasureSpec(
+              width  -  SpecTheme.dpButtonImgSize, MeasureSpec.EXACTLY),
+          MeasureSpec.makeMeasureSpec(
+                SpecTheme.dpButtonImgSize, MeasureSpec.EXACTLY)
+      );
+    }
     scrollView.measure(widthMeasureSpec, heightMeasureSpec);
-    setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+    setMeasuredDimension(width, height);
   }
 
   @Override
@@ -221,6 +261,12 @@ public class UiMainFrag extends UiFragment   {
     int height = bottom - top;
     int widht = right - left;
     scrollView.layout(0, 0, widht, height);
+    if (progressBar.getVisibility() == VISIBLE) {
+      progressBar.layout(SpecTheme.dpButtonImgSizeHalf,
+          SpecTheme.dpButtonImgSizeHalf,
+          SpecTheme.dpButtonImgSizeHalf + progressBar.getMeasuredWidth(),
+          SpecTheme.dpButtonImgSizeHalf + progressBar.getMeasuredHeight());
+    }
   }
 
 
@@ -255,10 +301,12 @@ public class UiMainFrag extends UiFragment   {
     int progress  =  TestPresenter.getProgress();
     if (100 == progress) {
       //Data ready , draw
+      progressBar.setVisibility(GONE);
       prepareChart();
     }  else if (0 == progress) {
       //No Data - hide table
       clearData();
+      progressBar.setVisibility(GONE);
     }  else  {
       //Update progress bar
       updateProgress();
@@ -337,7 +385,9 @@ public class UiMainFrag extends UiFragment   {
   }
 
   void  updateProgress() {
-
+    progressBar.setVisibility(VISIBLE);
+    progressBar.setProgress(TestPresenter.getProgress());
+    progressBar.requestLayout();
   }
 
   private class OuterPapirus extends FrameLayout {

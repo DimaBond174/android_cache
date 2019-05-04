@@ -197,10 +197,12 @@ public class CaseKeyInt3  implements ITestCase {
            cur_items_mult *= 10;
            cur_max_items = StaticConsts.START_ITEMS * cur_items_mult;
            ++index;
-           cur_progress += progress_step;
-           int progress = cur_progress / 10000;
-           if (progress > 99) progress = 99;
-           TestPresenter.setProgress(progress);
+           if (keep_run  &&  i_work_for_id  ==  id_case_start) {
+             cur_progress += progress_step;
+             int progress = cur_progress / 10000;
+             if (progress > 99) progress = 99;
+             TestPresenter.setProgress(progress);
+           }
          } while (keep_run  &&  cur_max_items <= max_items);
         results.put(cur_tester, cur_times);
       } // tester
@@ -224,7 +226,7 @@ public class CaseKeyInt3  implements ITestCase {
       //Warm up:
       int  len  =  keys.length;
       int  i = 0;
-      while (len > 0  && i < cur_max_items) {
+      while (keep_run  &&  len > 0  && i < cur_max_items) {
         --len;
         ++i;
         cur_tester.insert(keys[len]);
@@ -232,12 +234,12 @@ public class CaseKeyInt3  implements ITestCase {
 
       //Go testing:
       CyclicBarrier barrier = new CyclicBarrier(insert_threads + search_threads);
-      for ( i  = 0; i < insert_threads; ++i) {
+      for ( i  = 0; keep_run  &&  i < insert_threads; ++i) {
         testerThreads.add(
             new InsertThread(keys, cur_max_items, barrier, cur_tester));
       }
 
-      for ( i  = 0; i < search_threads; ++i) {
+      for ( i  = 0; keep_run  &&  i < search_threads; ++i) {
         testerThreads.add(
             new SearchThread(keys, cur_max_items, barrier, cur_tester));
       }
@@ -270,7 +272,7 @@ public class CaseKeyInt3  implements ITestCase {
         String  str  =  FileAdapter.readFile(TestCaseFile,  SpecTheme.context);
         int str_len = str.length();
         int j  =  0;
-        while (keep_run  &&  j  < str_len  &&  i < len) {
+        while (keep_run  &&  j  < str_len  &&  i < len)  {
           long  num  =  0L;
           do {
             char ch = str.charAt(j);
@@ -293,17 +295,23 @@ public class CaseKeyInt3  implements ITestCase {
         keys[i]  =  new IKeyInt3(raw_data[i], raw_data[i], raw_data[i]);
         ++i;
       } //while
-      if (!repeat_previous) {
+
+      if (keep_run  && !repeat_previous) {
         save_raw_data();
       }
-      cur_progress = 50000;
-      TestPresenter.setProgress(5);
+
       if (keep_run  &&  i_work_for_id  ==  id_case_start) {
+        cur_progress = 50000;
+        TestPresenter.setProgress(5);
         // prepare NDK
 
       }
-      cur_progress = 100000;
-      TestPresenter.setProgress(10);
+
+      if (keep_run  &&  i_work_for_id  ==  id_case_start) {
+        cur_progress = 100000;
+        TestPresenter.setProgress(10);
+      }
+
     }  // loadData
 
     void save_raw_data() {
@@ -311,7 +319,10 @@ public class CaseKeyInt3  implements ITestCase {
       for (IKeyInt3 key : keys) {
         sb.append(key.k1).append(',');
       }
-      FileAdapter.saveFile(TestCaseFile, sb.toString(), SpecTheme.context);
+      if (keep_run) {
+        FileAdapter.saveFile(TestCaseFile, sb.toString(), SpecTheme.context);
+      }
+
     }
   } // CaseThread
 
@@ -343,6 +354,7 @@ public class CaseKeyInt3  implements ITestCase {
       try {
         local_thread.join();
       } catch (Exception e) {}
+      local_thread  =  null;
     }
 
 
@@ -368,7 +380,7 @@ public class CaseKeyInt3  implements ITestCase {
         for (IKeyInt3  key  :  keys)  {
           tester.insert(key);
           ++i;
-          if  (i >= max_items)  {  break;  }
+          if  (!keep_run  ||  i >= max_items)  {  break;  }
         }  //  for
       } catch (Exception e) {
         Log.e(HTAG,"Exception:", e);
@@ -403,6 +415,7 @@ public class CaseKeyInt3  implements ITestCase {
       try {
         local_thread.join();
       } catch (Exception e) {}
+      local_thread  =  null;
     }
 
     int get_found () {
@@ -442,7 +455,7 @@ public class CaseKeyInt3  implements ITestCase {
             ++not_found_;
           }
           ++i;
-          if  (i >= max_items)  {  break;  }
+          if  (!keep_run || i >= max_items)  {  break;  }
         }  //  for
         found  =  found_;
         not_found  =  not_found_;

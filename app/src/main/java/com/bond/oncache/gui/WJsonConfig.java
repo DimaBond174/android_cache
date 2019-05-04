@@ -71,6 +71,8 @@ public class WJsonConfig extends FrameLayout {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     int widht  =  MeasureSpec.getSize(widthMeasureSpec);
+    measureChildWithMargins(papirus, widthMeasureSpec, 0,
+        heightMeasureSpec, 0);
     setMeasuredDimension(widht, papirus_height);
   }
 
@@ -86,14 +88,8 @@ public class WJsonConfig extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//      int widht = MeasureSpec.getSize(widthMeasureSpec);
-//
-//      if  (null  ==  table) {
-//        table_width = widht;
-//        table_height = SpecTheme.dpAvaIconSize;
-//      }
-//
-//      setMeasuredDimension(table_width,  table_height);
+      int widht  =  MeasureSpec.getSize(widthMeasureSpec);
+      setMeasuredDimension(widht,  papirus_height);
     }
 
     @Override

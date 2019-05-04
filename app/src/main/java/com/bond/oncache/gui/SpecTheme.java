@@ -29,6 +29,7 @@ public class SpecTheme {
     public static final int PLimeColor        = 0xff00FF00;
     public static final int PLightGreenColor  = 0xff66bb6a;
     public static final int PForestGreenColor = 0xff228B22;
+    public static final int PForestGreenColorA = 0x77228B22;
     public static final int PGreenOKColor     = 0xff64dd17;
     public static final int PRedBADColor      = 0xffd50000;
 
