@@ -2,7 +2,6 @@ package com.bond.oncache.cases;
 
 import android.util.Log;
 
-import com.bond.oncache.R;
 import com.bond.oncache.TestPresenter;
 import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.i.IKeyInt3;
@@ -12,6 +11,7 @@ import com.bond.oncache.i.ITesterThread;
 import com.bond.oncache.objs.FileAdapter;
 import com.bond.oncache.objs.StaticConsts;
 import com.bond.oncache.objs.TJsonToCfg;
+import com.bond.oncache.objs.TestParam;
 import com.github.mikephil.charting.data.Entry;
 
 import java.util.ArrayList;
@@ -35,6 +35,24 @@ public class CaseKeyInt3  implements ITestCase {
   }
 
   @Override
+  public TestParam[] get_required_params() {
+    return new TestParam[] {
+       new TestParam( TestParam.TYPE_BOOL,
+           StaticConsts.PARM_repeat_previous, "0"),
+        new TestParam( TestParam.TYPE_NUM,
+            StaticConsts.PARM_insert_threads, "1", 0, 100),
+        new TestParam( TestParam.TYPE_NUM,
+            StaticConsts.PARM_search_threads, "0", 0, 100),
+        new TestParam( TestParam.TYPE_ITEMS,
+            StaticConsts.PARM_max_items, "100000",
+            1000,  1000000),
+        new TestParam( TestParam.TYPE_NUM,
+            StaticConsts.PARM_capacity_percent, "10",
+            1, 100),
+    };
+  }
+
+  @Override
   public boolean startTestCase(TJsonToCfg cfg) {
     boolean  re  =  false;
     try {
@@ -42,7 +60,7 @@ public class CaseKeyInt3  implements ITestCase {
       stop();
       do  {
         boolean repeat_previous = false;
-        String str  =  cfg.getParam("repeat previous");
+        String str  =  cfg.getParam(StaticConsts.PARM_repeat_previous);
         if (null == str)  {
           repeat_previous = false;
         }  else  {
@@ -52,16 +70,16 @@ public class CaseKeyInt3  implements ITestCase {
             !FileAdapter.existsFile(TestCaseFile, SpecTheme.context)) {
           repeat_previous  =  false;
         }
-        str  =  cfg.getParam("insert threads");
+        str  =  cfg.getParam(StaticConsts.PARM_insert_threads);
         if (null == str)  {  break; }
         int  insert_threads  =  Integer.parseInt(str);
-        str  =  cfg.getParam("search threads");
+        str  =  cfg.getParam(StaticConsts.PARM_search_threads);
         if (null == str)  {  break; }
         int  search_threads  =  Integer.parseInt(str);
-        str  =  cfg.getParam("max items");
+        str  =  cfg.getParam(StaticConsts.PARM_max_items);
         if (null == str)  {  break; }
         int max_items  =  Integer.parseInt(str);
-        str  =  cfg.getParam("capacity percent");
+        str  =  cfg.getParam(StaticConsts.PARM_capacity_percent);
         if (null == str)  {  break; }
         int  capacity_percent  =  Integer.parseInt(str);
         synchronized (TAG) {
@@ -89,6 +107,12 @@ public class CaseKeyInt3  implements ITestCase {
       }
     }
   }
+
+  @Override
+  public String get_settings_for_JSON() {
+    return caseThread.get_settings_for_JSON();
+  }
+
   //  Private Incapsulation :
   /////////////////////////////////////////////////////////////////
   static final String TAG = "CaseKeyInt3";
@@ -171,6 +195,21 @@ public class CaseKeyInt3  implements ITestCase {
     static final String HTAG = "CaseThread";
     final CopyOnWriteArraySet<ITesterThread> testerThreads =  new CopyOnWriteArraySet<>();
 
+    String get_settings_for_JSON() {
+      StringBuilder sb = new StringBuilder(1048);
+          sb.append(",\"insert threads\":\"")
+              .append(insert_threads).append("\"")
+          .append(",\"search threads\":\"")
+              .append(search_threads).append("\"")
+          .append(",\"repeat previous\":\"")
+              .append(repeat_previous? '1' : '0').append("\"")
+          .append(",\"max items\":\"")
+              .append(max_items).append("\"")
+          .append(",\"capacity percent\":\"")
+              .append(capacity_percent).append("\"");
+      return sb.toString();
+    }
+
     @Override
     public void run() {
       try {
@@ -208,6 +247,7 @@ public class CaseKeyInt3  implements ITestCase {
       } // tester
       if (keep_run  &&  i_work_for_id  ==  id_case_start) {
         cfg.putResults(results);
+        TestPresenter.saveResultsToHistory(cfg);
         TestPresenter.setProgress(100);
       }
     }

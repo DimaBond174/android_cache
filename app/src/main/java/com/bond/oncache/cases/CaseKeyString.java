@@ -8,6 +8,7 @@ import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.i.ITestCase;
 import com.bond.oncache.objs.FileAdapter;
 import com.bond.oncache.objs.TJsonToCfg;
+import com.bond.oncache.objs.TestParam;
 
 public class CaseKeyString implements ITestCase {
   // Public Java Interface :
@@ -20,6 +21,11 @@ public class CaseKeyString implements ITestCase {
   @Override
   public int get_key_type() {
     return 0;
+  }
+
+  @Override
+  public TestParam[] get_required_params() {
+    return new TestParam[0];
   }
 
   @Override
@@ -48,6 +54,11 @@ public class CaseKeyString implements ITestCase {
   @Override
   public void stop() {
 
+  }
+
+  @Override
+  public String get_settings_for_JSON() {
+    return null;
   }
 
   //  Private Incapsulation :

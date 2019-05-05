@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Spinner
+xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?spinner"
+    android:background="@drawable/spinner_wh_background"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/spinner_margin_left"
+    android:spinnerMode="dropdown" />

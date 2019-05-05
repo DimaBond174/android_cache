@@ -15,6 +15,14 @@ public class RegistryCases {
     return  cases[0];
   }
 
+  public static String[] get_names() {
+    String re[] = new String[cases.length];
+    for (int  i = 0;  i < cases.length;  ++i) {
+      re[i]  =  cases[i].get_case_name();
+    }
+    return  re;
+  }
+
   private static final ITestCase[] cases = new ITestCase[] {
       new CaseKeyInt3()
   };

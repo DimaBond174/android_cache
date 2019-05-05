@@ -2,6 +2,8 @@ package com.bond.oncache.gui;
 
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -32,6 +34,11 @@ public abstract class UiFragment extends FrameLayout implements View.OnClickList
     public abstract String getTitle();
 
     public abstract void onPresenterChange();
+
+    public abstract void prepareLocalMenu(Menu menu);
+    public abstract boolean onSelectLocalMenu(int menu_item_id);
+    public abstract Drawable getFABicon();
+    public abstract void onFABclick();
 
 //    public abstract void setAnswerMessage(MsgTemplate msg);
 //

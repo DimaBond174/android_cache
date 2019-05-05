@@ -14,6 +14,21 @@ import java.io.InputStream;
 public class FileAdapter {
   // Public Java Interface :
   /////////////////////////////////////////////////////////////////
+  public static File[]  getFileList(String folder,  Context context)  {
+    File[] re  =  null;
+    StringBuilder sb  = new StringBuilder(256);
+    sb.append(context.getFilesDir().getPath())
+        .append(File.separator)
+        .append(folder);
+    try {
+      File dir = new File(sb.toString());
+      re = dir.listFiles();
+    } catch (Exception e) {
+      Log.e(TAG, "getFileList error:", e);
+    }
+    return  re;
+  }
+
   public static boolean existsFile(String file,  Context context)  {
     boolean  re  = false;
     try {
@@ -55,6 +70,52 @@ public class FileAdapter {
       }
     }
     return re;
+  }
+
+  public static String readFile(File f)  {
+    if (!f.exists()) {  return EMPTY_STR;  }
+    long llen  =  f.length();
+    int  ilen  =  (int) llen;
+    if (llen  !=  ilen  ||  ilen  <  1) {  return EMPTY_STR;  }
+    ByteArrayOutputStream fbuf  =  new ByteArrayOutputStream(ilen);
+    try {
+      InputStream in  =  new FileInputStream(f.getAbsolutePath());
+      byte[] buf = new byte[2048];
+      int len;
+      while ((len = in.read(buf)) != -1) {
+        fbuf.write(buf, 0,  len);
+      }
+      in.close();
+    } catch (Exception e) {
+      Log.e(TAG,"readFile err:",e);
+    }
+    return fbuf.toString();
+  }  //   readFile
+
+  public static boolean saveJsonHistory(String folder,
+      String json, Context context)  {
+    StringBuilder sb  = new StringBuilder(256);
+    sb.append(context.getFilesDir().getPath()).append(File.separator)
+        .append(folder);
+    File dir = new File(sb.toString());
+    dir.mkdirs();
+    sb.append(File.separator).append(System.currentTimeMillis());
+    File f = new File (sb.toString());
+    if (f.exists()) {
+      f.delete();
+    }
+    boolean re = false;
+    try {
+      f.createNewFile();
+      if (f.getFreeSpace() > LoLevel) {
+        FileOutputStream fOut = new FileOutputStream(f);
+        fOut.write(json.getBytes());
+        fOut.flush();
+        fOut.close();
+        re = true;
+      }
+    } catch (Exception e) {}
+    return  re;
   }
 
   public static void saveFile(String file, String text, Context context)  {

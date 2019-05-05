@@ -8,6 +8,9 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+
+import com.bond.oncache.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -147,35 +150,28 @@ public class SpecTheme {
 
     public static Context context = null;
     public static Resources resources = null;
-    public static Drawable empty1 = null;
-    public static Drawable sigLvl0 = null;
+//    public static Drawable empty1 = null;
+//    public static Drawable sigLvl0 = null;
 //    public static Drawable sigLvl1 = null;
 //    public static Drawable sigLvl2 = null;
 //    public static Drawable sigLvl3 = null;
-    public static Drawable[][] sigLvlArr = new Drawable[2][3];
-    public static Drawable doneOK        = null; //Зелёная галка
-    public static Drawable cancelWrong = null; //Красный крестик
-    public static Drawable fileIcon         = null; //Иконка файла
+//    public static Drawable[][] sigLvlArr = new Drawable[2][3];
+//    public static Drawable doneOK        = null; //Зелёная галка
+//    public static Drawable cancelWrong = null; //Красный крестик
+//    public static Drawable fileIcon         = null; //Иконка файла
+    public static Drawable play_icon      = null;
+    public static Drawable stop_icon      = null;
+    public static Drawable ok_icon         = null;
 
-    //Блокиратор множественного нажатия (когда много виджетов хватаются за одно касание)
+  //Блокиратор множественного нажатия (когда много виджетов хватаются за одно касание)
     public static long lastClickTime = 0L;
 
     public  static void onDestroy(){
         context  =  null;
         resources = null;
-        empty1 = null;
-        sigLvl0 = null;
-//        sigLvl1 = null;
-//        sigLvl2 = null;
-//        sigLvl3 = null;
-        for (int i=0; i<3;++i){
-            sigLvlArr[0][i]=null;
-            sigLvlArr[1][i]=null;
-        }
-        doneOK        = null;
-        cancelWrong = null;
-        fileIcon         = null;
-
+      play_icon = null;
+      stop_icon = null;
+      ok_icon = null;
     }
 
     //public static void applyMetrics(float den, Resources res){
@@ -183,6 +179,13 @@ public class SpecTheme {
     public static void applyMetrics(Context dialogCtx)  {
         float den = dialogCtx.getResources().getDisplayMetrics().density;
         context  =  dialogCtx;
+      play_icon = ContextCompat.getDrawable(context, R.drawable.ic_play_circle_outline_black_24dp);
+      play_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
+      stop_icon = ContextCompat.getDrawable(context, R.drawable.ic_stop_black_24dp);
+      stop_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
+      ok_icon = ContextCompat.getDrawable(context, R.drawable.ic_done_black_24dp);
+      ok_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
+
 //        resources = dialogCtx.getResources();
 //        fileIcon = AppCompatResources.getDrawable(dialogCtx, R.drawable.file_icon);
 //        doneOK = AppCompatResources.getDrawable(dialogCtx, R.drawable.ic_done_black_24dp);

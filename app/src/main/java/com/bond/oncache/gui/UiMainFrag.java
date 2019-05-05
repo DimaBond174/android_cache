@@ -11,6 +11,7 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -34,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class UiMainFrag extends UiFragment   {
-  public static final String TAG = "UiMainFrag";
 
   ScrollView scrollView;
   ScrollView scrollViewTable;
@@ -151,74 +151,86 @@ public class UiMainFrag extends UiFragment   {
     addView(progressBar, new LayoutParams(LayoutParams.MATCH_PARENT,
         LayoutParams.MATCH_PARENT));
 
-    setChartData();
+    //setChartData();
   }
 
-  void setChartData() {
-
-    chart.resetTracking();
-
-    ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-
-    for (int z = 0; z < 3; z++) {
-
-      ArrayList<Entry> values = new ArrayList<>();
-
-      for (int i = 0; i < 10; i++) {
-        double val = (Math.random() * 100) + 3;
-        values.add(new Entry(i, (float) val));
-      }
-
-      LineDataSet d = new LineDataSet(values, "DataSet " + (z + 1));
-      d.setLineWidth(2.5f);
-      d.setCircleRadius(4f);
-
-      int color = SpecTheme.color_array[z % SpecTheme.color_array.length];
-      d.setColor(color);
-      d.setCircleColor(color);
-      dataSets.add(d);
+  @Override
+  public Drawable getFABicon() {
+    int prog = TestPresenter.getProgress();
+    Drawable re;
+    if  (0 == prog || 100 == prog)  {
+      re = SpecTheme.play_icon;
+    }  else {
+      re = SpecTheme.stop_icon;
     }
+    return  re;
+  }
 
-    // make the first DataSet dashed
-    ((LineDataSet) dataSets.get(0)).enableDashedLine(10, 10, 0);
-    ((LineDataSet) dataSets.get(0)).setColors(ColorTemplate.VORDIPLOM_COLORS);
-    ((LineDataSet) dataSets.get(0)).setCircleColors(ColorTemplate.VORDIPLOM_COLORS);
-
-    LineData data = new LineData(dataSets);
-    chart.setData(data);
-    chart.setBackgroundColor(SpecTheme.KeyBoardColor);
-    chart.invalidate();
-
-    String  table_data[][] = new String[4][5];
-    table_data[0][0] = "Test name";
-    table_data[0][1] = "100";
-    table_data[0][2] = "1000/10";
-    table_data[0][3] = "10000/10";
-    table_data[0][4] = "100000/10";
-    table_data[1][0] = "FacebookCache";
-    table_data[2][0] = "OnCacheSMRU";
-    table_data[3][0] = "IntelCache";
-    table_data[1][1] = "2307";
-    table_data[2][1] = "119";
-    table_data[3][1] = "12307";
-    table_data[1][2] = "2307";
-    table_data[2][2] = "174";
-    table_data[3][2] = "2307";
-    table_data[1][3] = "2307";
-    table_data[2][3] = "78";
-    table_data[3][3] = "2307";
-    table_data[1][4] = "2307";
-    table_data[2][4] = "12356";
-    table_data[3][4] = "14";
-    int  table_colors[]  =  new int[4];
-    table_colors[0]  =  SpecTheme.PBlackColor;
-    table_colors[1]  =  SpecTheme.color_array[0];
-    table_colors[2]  =  SpecTheme.color_array[1];
-    table_colors[3]  =  SpecTheme.color_array[2];
-
-    simple_table.setTable_data(table_data,  table_colors);
-
-  }  //  setChartData
+//  void setChartData() {
+//
+//    chart.resetTracking();
+//
+//    ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+//
+//    for (int z = 0; z < 3; z++) {
+//
+//      ArrayList<Entry> values = new ArrayList<>();
+//
+//      for (int i = 0; i < 10; i++) {
+//        double val = (Math.random() * 100) + 3;
+//        values.add(new Entry(i, (float) val));
+//      }
+//
+//      LineDataSet d = new LineDataSet(values, "DataSet " + (z + 1));
+//      d.setLineWidth(2.5f);
+//      d.setCircleRadius(4f);
+//
+//      int color = SpecTheme.color_array[z % SpecTheme.color_array.length];
+//      d.setColor(color);
+//      d.setCircleColor(color);
+//      dataSets.add(d);
+//    }
+//
+//    // make the first DataSet dashed
+//    ((LineDataSet) dataSets.get(0)).enableDashedLine(10, 10, 0);
+//    ((LineDataSet) dataSets.get(0)).setColors(ColorTemplate.VORDIPLOM_COLORS);
+//    ((LineDataSet) dataSets.get(0)).setCircleColors(ColorTemplate.VORDIPLOM_COLORS);
+//
+//    LineData data = new LineData(dataSets);
+//    chart.setData(data);
+//    chart.setBackgroundColor(SpecTheme.KeyBoardColor);
+//    chart.invalidate();
+//
+//    String  table_data[][] = new String[4][5];
+//    table_data[0][0] = "Test name";
+//    table_data[0][1] = "100";
+//    table_data[0][2] = "1000/10";
+//    table_data[0][3] = "10000/10";
+//    table_data[0][4] = "100000/10";
+//    table_data[1][0] = "FacebookCache";
+//    table_data[2][0] = "OnCacheSMRU";
+//    table_data[3][0] = "IntelCache";
+//    table_data[1][1] = "2307";
+//    table_data[2][1] = "119";
+//    table_data[3][1] = "12307";
+//    table_data[1][2] = "2307";
+//    table_data[2][2] = "174";
+//    table_data[3][2] = "2307";
+//    table_data[1][3] = "2307";
+//    table_data[2][3] = "78";
+//    table_data[3][3] = "2307";
+//    table_data[1][4] = "2307";
+//    table_data[2][4] = "12356";
+//    table_data[3][4] = "14";
+//    int  table_colors[]  =  new int[4];
+//    table_colors[0]  =  SpecTheme.PBlackColor;
+//    table_colors[1]  =  SpecTheme.color_array[0];
+//    table_colors[2]  =  SpecTheme.color_array[1];
+//    table_colors[3]  =  SpecTheme.color_array[2];
+//
+//    simple_table.setTable_data(table_data,  table_colors);
+//
+//  }  //  setChartData
 
   @Override
   public boolean onTouchEvent(MotionEvent event)  {
@@ -238,7 +250,15 @@ public class UiMainFrag extends UiFragment   {
     return false;
   }
 
+  @Override
+  public void prepareLocalMenu(Menu menu) {
 
+  }
+
+  @Override
+  public boolean onSelectLocalMenu(int menu_item_id) {
+    return false;
+  }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -275,6 +295,19 @@ public class UiMainFrag extends UiFragment   {
 
   }
 
+  @Override
+  public void onFABclick() {
+    int prog = TestPresenter.getProgress();
+    if  (0 == prog || 100 == prog)  {
+      TestPresenter.getGUInterface().showMessage(
+          TestPresenter.getRstring(R.string.strTest_try_start));
+      TestPresenter.startProgress();
+    }  else {
+      TestPresenter.getGUInterface().showMessage(
+          TestPresenter.getRstring(R.string.strTest_try_stop));
+      TestPresenter.stopProgress();
+    }
+  }
 
   @Override
   public void onPause() {
@@ -285,8 +318,8 @@ public class UiMainFrag extends UiFragment   {
   @Override
   public void onResume() {
     super.onResume();
-    wJsonConfig.setConfig();
-
+    wJsonConfig.setConfig(TestPresenter.getConfig());
+    prepareChart();
   }
 
   @Override
@@ -297,7 +330,6 @@ public class UiMainFrag extends UiFragment   {
 
   @Override
   public void onPresenterChange() {
-    //TODO progress bar
     int progress  =  TestPresenter.getProgress();
     if (100 == progress) {
       //Data ready , draw
@@ -374,7 +406,7 @@ public class UiMainFrag extends UiFragment   {
       chart.invalidate();
 
     } catch (Exception e) {
-      Log.e(TAG, "prepareChart() error: ", e);
+      Log.e(getTAG(), "prepareChart() error: ", e);
     }
   }
 

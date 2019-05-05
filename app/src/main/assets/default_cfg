@@ -1,0 +1,1 @@
+{"test case":"Case Key = Int[3]","insert threads":"1","search threads":"0","repeat previous":"0","max items":"100000","capacity percent":"10","testers":[{"tester":"Java.OnCacheSMRU","results":[8246,2813,2791]},{"tester":"Java.TGuava","results":[54068,45327,47345]},{"tester":"Java.TAndroidLRU","results":[15580,8037,8316]}]}

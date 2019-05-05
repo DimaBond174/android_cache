@@ -35,8 +35,9 @@ public class WJsonConfig extends FrameLayout {
     requestLayout();
   }
 
-  void  setConfig() {
-    TJsonToCfg cfg  = TestPresenter.getConfig();
+
+  void  setConfig(TJsonToCfg  cfg) {
+    if (null == cfg)  return;
     papirus.removeAllViews();
     json_params.clear();
     papirus_height = 0;

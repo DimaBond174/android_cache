@@ -23,8 +23,11 @@ import com.bond.oncache.gui.FragmentKey;
 import com.bond.oncache.gui.MainWindow;
 import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.gui.UiFragment;
+import com.bond.oncache.gui.UiHistoryFrag;
 import com.bond.oncache.gui.UiMainFrag;
+import com.bond.oncache.gui.UiSettingsFrag;
 import com.bond.oncache.i.IView;
+import com.bond.oncache.objs.StaticConsts;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -36,15 +39,14 @@ public class MainActivity extends AppCompatActivity implements IView {
   final GuiHandler guiHandler = new GuiHandler(Looper.getMainLooper());
   Toolbar toolbar  =  null;
   FloatingActionButton fab  =  null;
-  static final String FirstFragTAG = "UiMainFrag";
-  static final FragmentKey FirstFragKey = new FragmentKey(FirstFragTAG);
+
+  static final FragmentKey FirstFragKey = new FragmentKey(StaticConsts.FirstFragTAG);
   final Map<FragmentKey,  UiFragment>  uiFrags  =  new HashMap<FragmentKey,UiFragment>();
   final Deque<FragmentKey>  uiFragsControl  =  new ArrayDeque<FragmentKey>();
   UiFragment curActiveFrag  =  null;
   MainWindow mainWindow  =  null;
   boolean guiNotStarted  =  true;
-  Drawable play_icon;
-  Drawable stop_icon;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,41 +69,43 @@ public class MainActivity extends AppCompatActivity implements IView {
 //    tv.setText(TestPresenter.stringFromJNI());
     restoreState(savedInstanceState);
 //    onNewIntent(getIntent());
-    play_icon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_play_circle_outline_black_24dp);
-    play_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
-    stop_icon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_stop_black_24dp);
-    stop_icon.setColorFilter(new LightingColorFilter( 0, 0xffffffff));
-
-    setFABicon();
+    //setFABicon();
   }
 
-  void setFABicon() {
-    int prog = TestPresenter.getProgress();
-    if  (0 == prog || 100 == prog)  {
-      fab.setImageDrawable(play_icon);
-    }  else {
-      fab.setImageDrawable(stop_icon);
+  @Override
+  public void setFABicon() {
+    if (null  !=  curActiveFrag ) {
+      fab.setImageDrawable(curActiveFrag.getFABicon());
     }
   }
+
+  @Override
+  public void goBack() {
+    onBackPressed();
+  }
+
+  //  @Override
+//  void setFABicon() {
+//    int prog = TestPresenter.getProgress();
+//    if  (0 == prog || 100 == prog)  {
+//      fab.setImageDrawable(play_icon);
+//    }  else {
+//      fab.setImageDrawable(stop_icon);
+//    }
+//  }
 
   void onFABclick(View view) {
-    //need for stop fab.hide();
-    if  (0 == TestPresenter.getProgress())  {
-      Snackbar.make(view, TestPresenter.getRstring(R.string.strTest_try_start), Snackbar.LENGTH_LONG)
-          .setAction("Action", null).show();
-      TestPresenter.startProgress();
-    }  else {
-      Snackbar.make(view, TestPresenter.getRstring(R.string.strTest_try_stop), Snackbar.LENGTH_LONG)
-          .setAction("Action", null).show();
-      TestPresenter.stopProgress();
+    if (null != curActiveFrag) {
+      curActiveFrag.onFABclick();
     }
-
   }
 
   @Override
   public void onPresenterChange() {
+    if (null != curActiveFrag) {
+      curActiveFrag.onPresenterChange();
+    }
     setFABicon();
-    curActiveFrag.onPresenterChange();
   }
 
   @Override
@@ -117,6 +121,61 @@ public class MainActivity extends AppCompatActivity implements IView {
     return true;
   }
 
+  /**
+   * Gets called every time the user presses the menu button.
+   * Use if your menu is dynamic.
+   */
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    menu.clear();
+    if (null != curActiveFrag)  {
+      if (!curActiveFrag.getTAG().equals(StaticConsts.FirstFragTAG))  {
+        menu.add(0, StaticConsts.MENU_UiMain, Menu.NONE,
+            R.string.strUiMainFragM);
+      }
+      if (!curActiveFrag.getTAG().equals(StaticConsts.UiSettingsTAG))  {
+        menu.add(0, StaticConsts.MENU_UiSettings, Menu.NONE,
+            R.string.strUiSettingsFrag);
+      }
+      if (!curActiveFrag.getTAG().equals(StaticConsts.UiHistoryTAG))  {
+        menu.add(0, StaticConsts.MENU_UiHistory, Menu.NONE,
+            R.string.strUiHistoryFrag);
+      }
+      curActiveFrag.prepareLocalMenu(menu);
+    }
+
+    // Back button:
+    menu.add(2, StaticConsts.MENU_Exit, Menu.NONE,
+        R.string.strExit);
+
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    super.onOptionsItemSelected(item);
+    boolean  was_my_menu = true;
+    int menu_item_id = item.getItemId();
+    switch (menu_item_id) {
+      case StaticConsts.MENU_UiMain:
+        setCurActiveFrag(new FragmentKey(StaticConsts.FirstFragTAG));
+        break;
+      case StaticConsts.MENU_UiSettings:
+        setCurActiveFrag(new FragmentKey(StaticConsts.UiSettingsTAG));
+        break;
+      case StaticConsts.MENU_UiHistory:
+        setCurActiveFrag(new FragmentKey(StaticConsts.UiHistoryTAG));
+        break;
+      case StaticConsts.MENU_Exit:
+        exitSpecNetMain();
+        break;
+      default:
+        was_my_menu = null == curActiveFrag? false :
+          curActiveFrag.onSelectLocalMenu(menu_item_id);
+    }
+    if (was_my_menu)  { return  true; }
+    return super.onOptionsItemSelected(item);
+  }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
@@ -152,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements IView {
       curActiveFrag = frg;
       mainWindow.setCurActiveFrag(curActiveFrag);
 
-      if (curActiveFrag.getTAG().contains(FirstFragTAG)) {
+      if (curActiveFrag.getTAG().equals(StaticConsts.FirstFragTAG)) {
         clearUiFrags(FirstFragKey);
       }
 
@@ -162,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     if (null  !=  curActiveFrag)  {
       curActiveFrag.onResume();
+      setFABicon();
     }
   }
 
@@ -169,31 +229,19 @@ public class MainActivity extends AppCompatActivity implements IView {
     Context  context  =  MainActivity.this;
     UiFragment frg  =  null;
     switch (key.fragTAG) {
-//      case "UiSettingsFrag":
-//        frg=new UiSettingsFrag(context, fragmentKey);
-//        break;
-      case "UiLentaFrag":
+      case StaticConsts.UiSettingsTAG:
+        frg  =  new UiSettingsFrag(context,  key);
+        break;
+      case StaticConsts.UiHistoryTAG:
+        frg  =  new UiHistoryFrag(context,  key);
+        break;
+      case StaticConsts.FirstFragTAG:
       default:
-        frg=new UiMainFrag(context,  key);
+        frg  = new UiMainFrag(context,  key);
+        break;
     }
     return frg;
   }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
 
   @Override
   public void setToolbarTittle(String tittle) {
@@ -210,14 +258,6 @@ public class MainActivity extends AppCompatActivity implements IView {
     return MainActivity.this;
   }
 
-//  @Override
-//  public void onNewIntent(Intent intent){
-//
-//    if (!UiRoot.onIntentReceived(intent, false)) {
-//      super.onNewIntent(intent);
-//    }
-//  }//onNewIntent(Intent intent)
-
   @Override
   public void onPause() {
     if (null  !=  curActiveFrag) {
@@ -226,19 +266,15 @@ public class MainActivity extends AppCompatActivity implements IView {
     super.onPause();
   }
 
-
   private void onFirstStart() {
-    //mainWindow.init(SpecNetMain.this, drawerLayout);
-    //UiFragment frg=sr.getUiFragment();
     FragmentKey key=uiFragsControl.peekLast();
     if (null  ==   key) {
+      TestPresenter.onFirstStart();
       setCurActiveFrag(FirstFragKey);
     } else {
       setCurActiveFrag(key);
     }
-
-    guiNotStarted=false;
-
+    guiNotStarted  =  false;
   }
 
   @Override
@@ -259,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     if (null  !=  curActiveFrag) {
       curActiveFrag.onResume();
     }
-
+    onPresenterChange();
   }
 
   @Override
@@ -276,6 +312,17 @@ public class MainActivity extends AppCompatActivity implements IView {
     exitSpecNetMain();
     super.onDestroy();
   }
+
+  @Override
+  public void onBackPressed() {
+    if (null  !=  curActiveFrag
+        && curActiveFrag.getTAG().equals(StaticConsts.FirstFragTAG)) {
+      exitSpecNetMain();
+    }  else  {
+      setCurActiveFrag(FirstFragKey);
+    }
+  }
+
 
   private void exitSpecNetMain()  {
     try {

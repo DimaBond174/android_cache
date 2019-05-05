@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="pageBackground" format="reference" />
+    <attr name="textSubheader" format="reference" />
+    <attr name="textLarge" format="reference" />
+    <attr name="textRegular" format="reference" />
+    <attr name="whiteBackground" format="reference" />
+    <attr name="button" format="reference" />
+    <attr name="spinner" format="reference" />
+    <declare-styleable name="specnet">
+        <attr name="specnetURL" format="reference" />
+        <attr name="specnetRicon" format="reference" />
+        <attr name="specnetAllHeight" format="dimension" />
+        <attr name="specnetCaptionSize" format="integer" />
+        <attr name="specnetTextSize" format="integer" />
+    </declare-styleable>
+</resources>

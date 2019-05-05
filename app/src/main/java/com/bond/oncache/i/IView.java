@@ -9,4 +9,6 @@ public interface IView {
   Context  getForDialogCtx();
   void  showMessage(String  str);
   void  onPresenterChange();
+  void  setFABicon();
+  void  goBack();
 }

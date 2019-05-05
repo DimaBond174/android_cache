@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.bond.oncache.TestPresenter;
 import com.bond.oncache.cases.RegistryCases;
+import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.i.ITestCase;
 import com.bond.oncache.i.ITester;
 import com.bond.oncache.testers.RegistryTesters;
@@ -26,23 +27,23 @@ public class TJsonToCfg {
        jsonObj  =  new JSONObject(json);
       //faux loop
       do {
-        String str = jsonObj.getString("test case");
+        String str = jsonObj.getString(StaticConsts.PARM_test_case);
         if  (null == str)  break;
         cur_test_case  = RegistryCases.getCase(str);
-        str  =  jsonObj.getString("insert threads");
+        str  =  jsonObj.getString(StaticConsts.PARM_insert_threads);
         if (null == str)  {  break; }
         int  insert_threads  =  Integer.parseInt(str);
-        str  =  jsonObj.getString("search threads");
+        str  =  jsonObj.getString(StaticConsts.PARM_search_threads);
         if (null == str)  {  break; }
         int  search_threads  =  Integer.parseInt(str);
         boolean  single_thread_case = 1 == (search_threads + insert_threads);
-        JSONArray arr_tst  =  jsonObj.getJSONArray("testers");
+        JSONArray arr_tst  =  jsonObj.getJSONArray(StaticConsts.PARM_testers);
         testers = new ArrayList<>();
         results = new HashMap<>();
         boolean data_exists  =  false;
         for (int  i  =  0;  i < arr_tst.length();  ++i)  {
           JSONObject o = arr_tst.getJSONObject(i);
-          str  =  o.getString("tester");
+          str  =  o.getString(StaticConsts.PARM_1tester);
           if  (null == str)  continue;
           ITester tester =  RegistryTesters.getTester(str);
           if  (null == tester)  continue;
@@ -50,21 +51,23 @@ public class TJsonToCfg {
           testers.add(tester);
           JSONArray arr_results  = null;
           try {
-            arr_results = jsonObj.getJSONArray("results");
-          } catch (Exception e) {}
-
-          if  (null == arr_results)  continue;
-          if  (arr_results.length() <= 0) continue;
-          ArrayList<Entry>  cur_results = new ArrayList<>();
-          for (int  j = 0 ;  j < arr_results.length();  ++j) {
-            cur_results.add(new Entry(j, arr_tst.getInt(j)));
+            arr_results = o.getJSONArray(StaticConsts.PARM_results);
+          } catch (Exception e) {
+            Log.e(TAG, "setJSON: No results for " + tester.get_algorithm_name(), e);
           }
-          results.put(tester, cur_results);
-          data_exists = true;
+          if  (null == arr_results)  continue;
+          int  len_results  =  arr_results.length();
+          if  (len_results  <=  0) continue;
+          ArrayList<Entry>  cur_results  =  new ArrayList<>();
+          for (int  j = 0 ;  j  <  len_results;  ++j) {
+            cur_results.add(new Entry(j,  arr_results.getLong(j)));
+          }
+          results.put(tester,  cur_results);
+          data_exists  =  true;
         }
-        cur_tester = -1;
-        testers_count = testers.size();
-        if (testers_count > 0) {
+        cur_tester  =  -1;
+        testers_count  =  testers.size();
+        if (testers_count  >  0) {
           is_valid  =  true;
           if (data_exists) {
             TestPresenter.setProgress(100);
@@ -78,7 +81,32 @@ public class TJsonToCfg {
 
   public String getJSON() {
     if (is_valid) {
-      return  null;
+      StringBuilder sb = new StringBuilder(2048);
+      sb.append("{\"test case\":\"")
+          .append(cur_test_case.get_case_name()).append("\"")
+          .append(cur_test_case.get_settings_for_JSON())
+          .append(",\"testers\":[");
+      boolean not_first  =  false;
+      for (ITester tester:  testers) {
+        if (not_first) {  sb.append(',');  }
+        not_first  =  true;
+        sb.append("{\"tester\":\"")
+            .append(tester.get_algorithm_name()).append("\"")
+            .append(",\"results\":[");
+        boolean not_first_result  =  false;
+        ArrayList<Entry>  result_data  =  results.get(tester);
+        if (null != result_data) {
+          for (Entry entry : result_data) {
+            long  val = (long)entry.getY();
+            if (not_first_result) {  sb.append(',');  }
+            not_first_result  =  true;
+            sb.append(val);
+          }
+        }
+        sb.append("]}");
+      }
+      sb.append("]}"); //testers
+      return  sb.toString();
     }
     return null;
   }

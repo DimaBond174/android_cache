@@ -3,9 +3,12 @@ package com.bond.oncache;
 
 import android.util.Log;
 import com.bond.oncache.cases.*;
+import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.i.ITestCase;
 import com.bond.oncache.i.ITester;
 import com.bond.oncache.i.IView;
+import com.bond.oncache.objs.FileAdapter;
+import com.bond.oncache.objs.StaticConsts;
 import com.bond.oncache.objs.TJsonToCfg;
 import com.bond.oncache.testers.*;
 
@@ -23,11 +26,11 @@ public class TestPresenter {
   public static void  setGUInterface(IView  iView) {
     cur_activity  =  iView;
     gui_on_screen  =  true;
-    if  (null == getConfig())  {
-      TJsonToCfg cfg  =  new TJsonToCfg();
-      cfg.setDefaultTestCase();
-      setConfig(cfg);
-    }
+//    if  (null == getConfig())  {
+//      TJsonToCfg cfg  =  new TJsonToCfg();
+//      cfg.setDefaultTestCase();
+//      setConfig(cfg);
+//    }
   }
 
   public static IView getGUInterface()  {
@@ -44,6 +47,17 @@ public class TestPresenter {
       return  gui.getForDialogCtx().getString(id);
     }
     return "";
+  }
+
+  public static void onFirstStart()  {
+    if  (null == getConfig()) {
+      String json = FileAdapter.loadAssetString(SpecTheme.context, StaticConsts.DefConfig);
+      if (!json.isEmpty()) {
+        TJsonToCfg  cfg  =  new TJsonToCfg();
+        cfg.setJSON(json);
+        setConfig(cfg);
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -82,9 +96,20 @@ public class TestPresenter {
     });
   }
 
+  public static void saveResultsToHistory(TJsonToCfg cfg) {
+    try {
+      String json  =  cfg.getJSON();
+      if (null != json) {
+        FileAdapter.saveJsonHistory(StaticConsts.HistoryFolder,
+            json, SpecTheme.context);
+      }
+    } catch ( Exception e) {
+      Log.e(TAG, "On save history error : ", e);
+    }
+  }
 
   public static void  startProgress()  {
-    if  (0 != progress)  {   return;  }
+    if  (0 > progress  &&  progress < 100)  {   return;  }
     TJsonToCfg cfg  =  getConfig();
     if  (null  ==  cfg ||  !cfg.is_valid)  {
       try {
@@ -124,6 +149,19 @@ public class TestPresenter {
         IView gui = getGUInterface();
         if (null  !=  gui)  {
           gui.getGuiHandler().post(r);
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "runOnGUIthread error:", e );
+      }
+    }
+  }
+
+  public static void runOnGUIthreadDelay (Runnable r,  long delay) {
+    if (gui_on_screen) {
+      try {
+        IView gui = getGUInterface();
+        if (null  !=  gui)  {
+          gui.getGuiHandler().postDelayed(r, delay);
         }
       } catch (Exception e) {
         Log.e(TAG, "runOnGUIthread error:", e );
