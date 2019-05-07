@@ -1,9 +1,14 @@
 package com.bond.oncache.gui;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.content.Context;
 import android.graphics.Canvas;
-
-import android.graphics.LightingColorFilter;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -29,7 +34,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -97,7 +101,7 @@ public class UiMainFrag extends UiFragment   {
     outerPapirus.addView(txt_result_caption);
 
 
-    simple_table  =  new WSimpleTable(context,  SpecTheme.KeyBoardColor, SpecTheme.PTextColor);
+    simple_table  =  new WSimpleTable(context,  SpecTheme.PWhiteColor, SpecTheme.PTextColor);
     outerPapirus.addView(simple_table);
 
     innerPapirus  =  new InnerPapirus(context);

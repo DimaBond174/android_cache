@@ -1,5 +1,11 @@
 package com.bond.oncache.gui;
-
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -113,8 +119,14 @@ public class SpecTheme {
         SColor,
         PGreenOKColor,
         PRedBADColor,
+        0xff6a1b9a,
+        0xffff5f52,
+        0xfff9a825,
+        0xff00c853,
+        0xff78909c,
         SDarkColor,
-        PLightGreenColor,
+        0xffbf360c,
+        PForestGreenColor,
         PGrayColor
     };
 

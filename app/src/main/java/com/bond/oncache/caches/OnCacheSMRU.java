@@ -37,7 +37,6 @@ public class OnCacheSMRU<K extends IKey, V> {
     baskets  =  null;
     updatePathOutH  =  null;
     updatePathOutL  =  null;
-    landscape_l  =  null;
   }
 
 
@@ -116,7 +115,7 @@ public class OnCacheSMRU<K extends IKey, V> {
   TONode  node_pool[]; //*node_pool;
 
   //Landscapes
-  byte  landscape_l[]  =  new byte[256];
+  final byte  landscape_l[]  =  new byte[256];
   int  land_l_p  =  0;
 
   byte getNextLand () {

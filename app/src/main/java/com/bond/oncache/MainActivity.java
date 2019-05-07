@@ -1,16 +1,18 @@
 package com.bond.oncache;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.LightingColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -64,12 +66,8 @@ public class MainActivity extends AppCompatActivity implements IView {
       }
     });
 
-    // Example of a call to a native method
-//    TextView tv = (TextView) findViewById(R.id.sample_text);
-//    tv.setText(TestPresenter.stringFromJNI());
     restoreState(savedInstanceState);
-//    onNewIntent(getIntent());
-    //setFABicon();
+//    onNewIntent(getIntent())
   }
 
   @Override
@@ -84,15 +82,6 @@ public class MainActivity extends AppCompatActivity implements IView {
     onBackPressed();
   }
 
-  //  @Override
-//  void setFABicon() {
-//    int prog = TestPresenter.getProgress();
-//    if  (0 == prog || 100 == prog)  {
-//      fab.setImageDrawable(play_icon);
-//    }  else {
-//      fab.setImageDrawable(stop_icon);
-//    }
-//  }
 
   void onFABclick(View view) {
     if (null != curActiveFrag) {
@@ -376,89 +365,12 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     @Override
     public void handleMessage(Message msg) {
-      //Важно: сообщения приходят и когда UI на паузе: https://stackoverflow.com/questions/8040280/how-to-handle-handler-messages-when-activity-fragment-is-paused
-      //в режиме разделённого экрана пауза - не остановка и не повод прекратить видео
-      //Цикл анимации работает на GUI thread в виде циклирующего MsgTAGs.M_ANIMATE
-      //и самое удобное место для его реанимации, на мой взгляд, тут:
-
-//      if (!UiRoot.isStarted) {
-//        return; //Если UIRoot остановлен, все сообщения исчезают == ОПРЕДЕЛЁННОСТЬ
-//      }
-
-
       try {
-        /* Если дольше секунды не было анимации, пора реанимировать */
-//                if (MsgTAGs.M_ANIMATE!=msg.what) {
-//                    if (System.currentTimeMillis() - sr.lastAnimationTime > 1000L) {
-//                        sr.animate(curActiveFrag);
-//                    }
-//                }
-//                        long curTime2 = System.currentTimeMillis();
-//                 if (curTime2 - keepAliveThread.lastTimeAcive.get()
-//                                > Constants.MSEC_ANDROID_ANR) {
-//                   keepAliveThread.resume();
-//                        }
         switch (msg.what) {
 //                    case MsgTAGs.M_KEEP_ALIVE:
 //                        keepAlive();
 //                        break;
-//          case MsgTAGs.M_ANIMATE:
-//            UiRoot.animate(curActiveFrag);
-//            break;
-//          case MsgTAGs.M_GO_BACK:
-//            onBackPressed();
-//            break;
-//          case MsgTAGs.M_GO_FRAG_UI:
-//            /* В сообщении имя фрагмента куда перейти - внутренние переходы */
-//            if (null != msg.obj) {
-//              onM_GO_FRAG_UI((MsgTemplate) msg.obj);
-//            }
-//            //else Log.i(TAG, "handleMessage: receive null in Object obj");
-//            break;
-//          case MsgTAGs.M_GO_FRAG_UI_MSG:
-//            /* Доставка сообщения во фрагмент (с пересозданием если его нет) */
-//            if (null != msg.obj) goFragmentMsg((MsgTemplate) msg.obj);
-//            //else Log.i(TAG, "handleMessage: receive null in Object obj");
-//            break;
-//          case MsgTAGs.M_SEND_TO_ACTIVE_FRAG:
-//            /* Для работы активного фрагмента - операции с СУБД и др.
-//             * Если фрагмент не активен, значит ему и не надо */
-//            if (null != msg.obj) sendMsgIfActive((MsgTemplate) msg.obj);
-//            break;
-//          case MsgTAGs.M_SHOW_ERR:
-//            if (null != msg.obj) {
-//              showErrorDlg((MsgTemplate) msg.obj);
-//            }
-//            break;
-//          case MsgTAGs.M_SHOW_WAIT:
-//            setWaitBtn();
-//            break;
-////                    case MsgTAGs.M_ASK_PASSWORD:
-////                        if (null != msg.obj) {
-////                            showDlgEnterPassword((MsgTemplate) msg.obj);
-////                        }
-////                        break;
-//          case MsgTAGs.M_NEW_MAIL:
-//            if (null != msg.obj) {
-//              onNewMail((MsgTemplate) msg.obj);
-//            }
-//            break;
-//          case MsgTAGs.M_AVA_CHANGED:
-//            onAvatarInfoChanged();
-//            break;
-////                    case MsgTAGs.M_CHANGE_TITLE:
-////                        toolbar.setTitle(curActiveFrag.getTitle());
-////                        break;
-////                    case MsgTAGs.M_GO_FRAGMENT:
-////                        goFragmentMsg(msg.obj);
-////                        //else Log.i(TAG, "handleMessage: receive null in Object obj");
-////                        break;
-//          case MsgTAGs.M_HIDE_R_MENU:
-//            hideRightMenu();
-//            break;
-//          case MsgTAGs.M_KEEP_ALIVE:
-//            //lastKeepAlive.set(System.currentTimeMillis());
-//            break;
+
           default:
             super.handleMessage(msg);
         }

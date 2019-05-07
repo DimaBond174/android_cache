@@ -1,4 +1,11 @@
 package com.bond.oncache.testers;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import com.bond.oncache.i.ITester;
 
@@ -25,6 +32,11 @@ public class RegistryTesters {
       //new TCaffeineKeyInt3(),
       new TOnCacheSMRUKeyInt3(),
       new TGuavaCacheKeyInt3(),
-      new TAndroidLRUKeyInt3()
+      new TAndroidLRUKeyInt3(),
+      new TCppOnCacheSMRUKeyInt3(),
+      new TCppOnCacheMLRUKeyInt3(),
+      new TCppOnCacheMMRUKeyInt3(),
+      new TOnCacheMLRUKeyInt3(),
+      new TOnCacheMMRUKeyInt3()
   };
 }

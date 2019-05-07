@@ -19,5 +19,8 @@
     <string name="strDefSettings">Set all default</string>
     <string name="strSelectAFile">Select a file</string>
     <string name="strFileName">File name: </string>
+    <string name="strAllTesters">All testers </string>
+    <string name="strSelectedTesters">Selected testers </string>
     <string name="strExit">Exit</string>
+    <string name="strERRNoTesters">All the testers selected are single-threaded. Please add testers.</string>
 </resources>

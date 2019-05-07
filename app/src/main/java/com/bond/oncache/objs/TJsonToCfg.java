@@ -1,10 +1,15 @@
 package com.bond.oncache.objs;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.util.Log;
 
-import com.bond.oncache.TestPresenter;
 import com.bond.oncache.cases.RegistryCases;
-import com.bond.oncache.gui.SpecTheme;
 import com.bond.oncache.i.ITestCase;
 import com.bond.oncache.i.ITester;
 import com.bond.oncache.testers.RegistryTesters;
@@ -69,9 +74,9 @@ public class TJsonToCfg {
         testers_count  =  testers.size();
         if (testers_count  >  0) {
           is_valid  =  true;
-          if (data_exists) {
-            TestPresenter.setProgress(100);
-          }
+//          if (data_exists) {
+//            TestPresenter.setProgress(100);
+//          }
         }
       } while(false);
     }  catch (Exception e) {
@@ -158,30 +163,30 @@ public class TJsonToCfg {
     return results;
   }
 
-  public void  setDefaultTestCase()  {
-    ITestCase cur_test_case  =  RegistryCases.getDefault();
-    StringBuilder sb = new StringBuilder(1024);
-    sb.append("{\"test case\":\"")
-        .append(cur_test_case.get_case_name()).append("\"")
-        .append(",\"insert threads\":\"1\"")
-        .append(",\"search threads\":\"0\"")
-        .append(",\"repeat previous\":\"0\"")
-        .append(",\"max items\":\"100000\"")
-        .append(",\"capacity percent\":\"10\"")
-        .append(",\"testers\":[");
-    boolean not_first  =  false;
-    ArrayList<String> tlist  =  RegistryTesters.getListTesters(cur_test_case.get_key_type());
-    for (String s :  tlist) {
-      if (not_first) {  sb.append(",");  }
-      not_first  =  true;
-      sb.append("{\"tester\":\"")
-          .append(s).append("\"")
-          .append(",\"results\":[]}");
-    }
-    sb.append("]}"); //testers
-    //settings_json  =  sb.toString();
-    setJSON(sb.toString());
-  }
+//  public void  setDefaultTestCase()  {
+//    ITestCase cur_test_case  =  RegistryCases.getDefault();
+//    StringBuilder sb = new StringBuilder(1024);
+//    sb.append("{\"test case\":\"")
+//        .append(cur_test_case.get_case_name()).append("\"")
+//        .append(",\"insert threads\":\"1\"")
+//        .append(",\"search threads\":\"0\"")
+//        .append(",\"repeat previous\":\"0\"")
+//        .append(",\"max items\":\"100000\"")
+//        .append(",\"capacity percent\":\"10\"")
+//        .append(",\"testers\":[");
+//    boolean not_first  =  false;
+//    ArrayList<String> tlist  =  RegistryTesters.getListTesters(cur_test_case.get_key_type());
+//    for (String s :  tlist) {
+//      if (not_first) {  sb.append(",");  }
+//      not_first  =  true;
+//      sb.append("{\"tester\":\"")
+//          .append(s).append("\"")
+//          .append(",\"results\":[]}");
+//    }
+//    sb.append("]}"); //testers
+//    //settings_json  =  sb.toString();
+//    setJSON(sb.toString());
+//  }
   //  Private Incapsulation :
   /////////////////////////////////////////////////////////////////
   static final String TAG = "TJsonToCfg";

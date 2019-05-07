@@ -1,16 +1,18 @@
 package com.bond.oncache.gui;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.TextView;
-
-import com.bond.oncache.TestPresenter;
 import com.bond.oncache.objs.StaticConsts;
 import com.bond.oncache.objs.TJsonToCfg;
 

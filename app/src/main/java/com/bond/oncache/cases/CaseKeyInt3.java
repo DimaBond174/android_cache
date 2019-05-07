@@ -1,4 +1,11 @@
 package com.bond.oncache.cases;
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.util.Log;
 
@@ -266,7 +273,7 @@ public class CaseKeyInt3  implements ITestCase {
       //Warm up:
       int  len  =  keys.length;
       int  i = 0;
-      while (keep_run  &&  len > 0  && i < cur_max_items) {
+      while (keep_run  &&  len > 0  && i < capacity) {
         --len;
         ++i;
         cur_tester.insert(keys[len]);
@@ -297,12 +304,41 @@ public class CaseKeyInt3  implements ITestCase {
     }
 
     long  provide1CppTest(ITester cur_tester, int  cur_max_items, int capacity )  {
+      //Warm up:
+      cur_tester.onStart(capacity,  cfg);
+      testerThreads.add(
+          new  CppThread(insert_threads,  search_threads, cur_max_items));
+      int  len  =  keys.length;
+      int  i = 0;
+      while (keep_run  &&  len > 0  && i < cur_max_items) {
+        --len;
+        ++i;
+        cur_tester.insert(keys[len]);
+      }  //  Warm up
+
+      //CppThread
+      //Go testing:
+      CyclicBarrier barrier = new CyclicBarrier(insert_threads + search_threads);
+      for ( i  = 0; keep_run  &&  i < insert_threads; ++i) {
+        testerThreads.add(
+            new InsertThread(keys, cur_max_items, barrier, cur_tester));
+      }
+
+      for ( i  = 0; keep_run  &&  i < search_threads; ++i) {
+        testerThreads.add(
+            new SearchThread(keys, cur_max_items, barrier, cur_tester));
+      }
 
       long start_time = System.nanoTime();
       for (ITesterThread test_thread : testerThreads) {
+        test_thread.start();
+      }
+      for (ITesterThread test_thread : testerThreads) {
         test_thread.join();
       }
-      return ((System.nanoTime() - start_time) / 1000);
+      long stop_time =  System.nanoTime();
+      cur_tester.onStop();
+      return ((stop_time - start_time) / 1000);
     }
 
     private void loadData() {
@@ -344,7 +380,7 @@ public class CaseKeyInt3  implements ITestCase {
         cur_progress = 50000;
         TestPresenter.setProgress(5);
         // prepare NDK
-
+        TestPresenter.setNDKtestCaseInt3(raw_data, raw_data.length);
       }
 
       if (keep_run  &&  i_work_for_id  ==  id_case_start) {
@@ -504,5 +540,56 @@ public class CaseKeyInt3  implements ITestCase {
       }
     }
   } // SearchThread
+
+  private class CppThread implements Runnable, ITesterThread  {
+    // Public Java Interface :
+    /////////////////////////////////////////////////////////////////
+    CppThread(int  insert_threads_, int  search_threads_,
+              int  max_items_)  {
+      insert_threads  =  insert_threads_;
+      search_threads  =  search_threads_;
+      max_items  =  max_items_;
+    }
+
+    public void start() {
+      local_thread = new Thread(this);
+      local_thread.start();
+    }
+
+    @Override
+    public void stop() {
+      TestPresenter.stopCppTest();
+      local_thread  =  null;
+    }
+
+    @Override
+    public void join() {
+      try {
+        local_thread.join();
+      } catch (Exception e) {}
+      local_thread  =  null;
+    }
+
+    //  Private Incapsulation :
+    /////////////////////////////////////////////////////////////////
+    // Protected by the sequence of the algorithm: read only after all writes completed
+    final int  insert_threads;
+    final int  search_threads;
+    final int  max_items;
+
+    Thread local_thread  =  null;
+
+    static final String HTAG = "CppThread";
+
+    @Override
+    public void run() {
+      try {
+        TestPresenter.runCppTest(insert_threads,  search_threads,  max_items);
+      } catch (Exception e) {
+        Log.e(HTAG,"Exception:", e);
+      }
+    }
+  } // CppThread
+
 
 }

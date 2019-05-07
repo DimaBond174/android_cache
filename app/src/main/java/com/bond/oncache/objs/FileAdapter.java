@@ -1,10 +1,15 @@
 package com.bond.oncache.objs;
 
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
+
 import android.content.Context;
 import android.util.Log;
-
-import com.bond.oncache.gui.SpecTheme;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,5 +1,11 @@
 package com.bond.oncache;
-
+/*
+ * This is the source code of SpecNet project
+ * It is licensed under MIT License.
+ *
+ * Copyright (c) Dmitriy Bondarenko
+ * feel free to contact me: specnet.messenger@gmail.com
+ */
 
 import android.util.Log;
 import com.bond.oncache.cases.*;
@@ -141,6 +147,9 @@ public class TestPresenter {
     w_Cfg_Lock.lock();
     cfg  =  jsonToCfg;
     w_Cfg_Lock.unlock();
+    if (jsonToCfg.is_valid)  {
+      setProgress(100);
+    }
   }
 
   public static void runOnGUIthread (Runnable r) {
@@ -201,5 +210,10 @@ public class TestPresenter {
    * A native method that is implemented by the 'native-lib' native library,
    * which is packaged with this application.
    */
-  public static native String stringFromJNI();
+  //public static native String stringFromJNI();
+  public static native void setNDKtestCaseInt3(int  rawData[],  int  rawDataLen);
+  public static native void warmUP(int cppTesterID,  int  capacity);
+  public static native void runCppTest(int  insert_threads,
+    int  search_threads,  int  max_items);
+  public static native void stopCppTest();
 }

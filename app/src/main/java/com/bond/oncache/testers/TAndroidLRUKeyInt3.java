@@ -5,7 +5,6 @@ import android.support.v4.util.LruCache;
 import com.bond.oncache.i.IKeyInt3;
 import com.bond.oncache.i.ITester;
 import com.bond.oncache.objs.TJsonToCfg;
-import com.google.common.cache.CacheBuilder;
 
 /**
  * Android LruCache
@@ -57,4 +56,5 @@ public class TAndroidLRUKeyInt3 implements ITester {
   public boolean amJavaTester() {
     return  true;
   }
+
 }
