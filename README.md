@@ -7,9 +7,15 @@ Step-by-step instructions on how to run a test using source code / ready-made co
 
 Finished compiled programs can be found [here: Artifactory](https://drive.google.com/open?id=1g0Rbjj443OxrTP09AxhMZJIEPhjg6usX)
 
-# Examples of the test results.
+## Video example of working with test bench:
 
-## Key - number array search :
+[![video](video.png)](https://youtu.be/y6tO-b5_sKg)
+
+---
+
+## Examples of the test results.
+
+### Key - number array search :
 
 ![device-2019-05-07-132003](device-2019-05-07-132003.png)
 
