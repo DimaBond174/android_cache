@@ -121,7 +121,7 @@ public class TJsonToCfg {
     try {
       re  =  jsonObj.getString(str);
     } catch (Exception e) {
-      Log.e(TAG, "getParam() error:", e);
+      //Log.e(TAG, "getParam() error:", e);
     }
     return  re;
   }

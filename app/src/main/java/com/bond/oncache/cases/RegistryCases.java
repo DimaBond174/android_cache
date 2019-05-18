@@ -31,6 +31,7 @@ public class RegistryCases {
   }
 
   private static final ITestCase[] cases = new ITestCase[] {
-      new CaseKeyInt3()
+      new CaseKeyInt3(),
+      new CaseKeyString()
   };
 }

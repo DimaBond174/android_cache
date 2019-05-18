@@ -20,10 +20,14 @@ add_library( # Sets the name of the library.
         native-lib.cpp
         cppsrc/TestPresenter.cpp
         cppsrc/cases/testcase1.cpp
+        cppsrc/cases/testcase2.cpp
         cppsrc/spec/JNIHelper.cpp
         cppsrc/testers/testoncachesmru.cpp
         cppsrc/testers/testoncachemlru.cpp
         cppsrc/testers/testoncachemmru.cpp
+        cppsrc/testers/testoncachesmru2.cpp
+        cppsrc/testers/testoncachemlru2.cpp
+        cppsrc/testers/testoncachemmru2.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a

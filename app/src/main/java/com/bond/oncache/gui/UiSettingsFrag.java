@@ -6,8 +6,11 @@ package com.bond.oncache.gui;
  * Copyright (c) Dmitriy Bondarenko
  * feel free to contact me: specnet.messenger@gmail.com
  */
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +31,11 @@ import android.widget.TextView;
 import com.bond.oncache.R;
 import com.bond.oncache.TestPresenter;
 import com.bond.oncache.cases.RegistryCases;
+import com.bond.oncache.i.IActivityForResult;
 import com.bond.oncache.i.IParamEditor;
 import com.bond.oncache.i.ITestCase;
+import com.bond.oncache.objs.ByteUtils;
+import com.bond.oncache.objs.FileAdapter;
 import com.bond.oncache.objs.StaticConsts;
 import com.bond.oncache.objs.TJsonToCfg;
 import com.bond.oncache.objs.TestParam;
@@ -37,7 +43,7 @@ import com.bond.oncache.testers.RegistryTesters;
 import java.util.ArrayList;
 
 
-public class UiSettingsFrag extends UiFragment   {
+public class UiSettingsFrag extends UiFragment  implements IActivityForResult {
   ScrollView scrollView;
   Papirus main_papirus;
   Papirus papirus;
@@ -77,6 +83,11 @@ public class UiSettingsFrag extends UiFragment   {
   @Override
   public String getTitle() {
     return TestPresenter.getRstring(R.string.strUiSettingsFrag);
+  }
+
+  @Override
+  public long getType() {
+    return ByteUtils.flagOn(0L, StaticConsts.FrgActivityForResult);
   }
 
   public UiSettingsFrag(Context context, FragmentKey fragmentKey) {
@@ -174,6 +185,12 @@ public class UiSettingsFrag extends UiFragment   {
                 LayoutParams.WRAP_CONTENT));
             wparams.add(wnum);
             break;
+          case TestParam.TYPE_FILE:
+            WChooseFile wfile  =  new WChooseFile(p, SpecTheme.context);
+            papirus.addView(wfile, new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT));
+            wparams.add(wfile);
+            break;
           default:
             break;
         }
@@ -183,6 +200,34 @@ public class UiSettingsFrag extends UiFragment   {
     }
   }
 
+  @Override
+  public void resultActivityForResult(AppCompatActivity activity, int requestCode, int resultCode, Intent data) {
+    if (resultCode == Activity.RESULT_OK) {
+      switch (requestCode) {
+        case StaticConsts.RQS_GET_CONTENT :
+          if (null  !=  data)  {
+            set_PARM_string_keys(
+                FileAdapter.getFileFromURI(
+                    activity, data.getData(), "NoName.data"));
+          }
+        break;
+        default:
+          break;
+      }
+    }
+  }
+
+  void set_PARM_string_keys(String fileName) {
+    if (null  ==  fileName ||  fileName.isEmpty()) {  return;  }
+    for (IParamEditor w : wparams) {
+      if (w.get_param_name().equals(StaticConsts.PARM_string_keys)) {
+        w.set_current_value(FileAdapter.getFileName(fileName));
+        ((View)w).setFocusableInTouchMode(true);
+        ((View)w).requestFocus();
+        break;
+      }
+    }
+  }
 
   @Override
   public void prepareLocalMenu(Menu menu) {

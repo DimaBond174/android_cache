@@ -10,11 +10,13 @@
 #ifndef TESTCASE2_H
 #define TESTCASE2_H
 
-#include "i/icase.h"
-#include "i/ikey2.h"
+#include "../i/ikey.h"
+#include "../i/icase.h"
+#include "../i/ikey2.h"
 #include <deque>
-#include <chrono>
 #include <future>
+#include <shared_mutex>
+#include "../spec/linuxsemaphore.h"
 
 /*
 *  Test case to insert/find intems with key(string)
@@ -25,41 +27,41 @@ using TimePoint  =  std::chrono::time_point<std::chrono::system_clock>;
 
 class TestCase2 :  public ITestCase {
 public:
- TestCase2();
- void  prepareTestCase(std::shared_ptr<IConfig>  &cfg, std::shared_ptr<ISystem>  &cur_system)  override;
- void  stop()  override;
- void  addAlgorithmTester_1thread(std::shared_ptr<IAlgorithmTester>  &tester)  override;
- void  addAlgorithmTester_Nthread(std::shared_ptr<IAlgorithmTester>  &tester)  override;
- void  start_1thread_tests()  override;
- void  start_Nthread_tests()  override;
+ TestCase2(const char * strData,  int32_t  strLen,  int32_t  maxItems);
+ ~TestCase2()  override ;
+  void  stop()  override;
+  void  warmUP (int32_t capacity, std::shared_ptr<IAlgorithmTester>  tester)  override;
+  int  get_key_type()  override;
+  void  doTest(int32_t  insert_threads,
+               int32_t  search_threads,  int32_t  max_items)  override;
 private:
- std::shared_ptr<IConfig>  l_cfg;
- std::shared_ptr<ISystem>  l_cur_system;
  std::deque<ElemNSizeKey *>  test_data;
- std::deque<std::shared_ptr<IAlgorithmTester>>  testers_1thread;
- std::deque<std::shared_ptr<IAlgorithmTester>>  testers_Nthread;
+  std::shared_ptr<IAlgorithmTester>  cur_tester;
+  std::shared_mutex  cur_tester_mutex;
+  std::atomic_bool  keep_run {  true };
+  std::atomic_uint32_t  tester_run_id { 0 };
+  Semaphore  semaphore;
 
- void  make_header(int64_t  startSize,  int64_t  testSize,  std::string  *str);
-private:
- class FindResults {
+  void  set_cur_tester(std::shared_ptr<IAlgorithmTester>  _cur_tester);
+  std::shared_ptr<IAlgorithmTester>  get_cur_tester();
+
+  class ParamsPack {
   public:
-   int64_t  thread_id;
-   int64_t  found;
-   int64_t  not_found;
-   TimePoint  start;
-   TimePoint  stop;
- };
+    ParamsPack(int32_t  _max_items, uint32_t  _my_run_id,
+               const std::shared_ptr<IAlgorithmTester>  &_cur_tester)
+        : max_items(_max_items),  my_run_id(_my_run_id),
+          cur_tester(_cur_tester)  {  }
+    const int32_t  max_items;
+    const uint32_t  my_run_id;
+    std::shared_ptr<IAlgorithmTester>  cur_tester;
+  };
 
- class InsertResults {
-  public:
-   int64_t  thread_id;
-   TimePoint  start;
-   TimePoint  stop;
- };
+  void  run_insert(std::shared_ptr<ParamsPack> params);
+  static void * s_run_insert(void  *ptr, std::shared_ptr<ParamsPack> params);
 
-   FindResults  find_in_thread(int  count,  IAlgorithmTester  *p_tester);
-   void  insert_in_thread(int  count,  std::promise<InsertResults>  prom,
-     IAlgorithmTester  *p_tester);
+  void  run_search(std::shared_ptr<ParamsPack> params);
+  static void * s_run_search(void  *ptr, std::shared_ptr<ParamsPack> params);
+
 };
 
 #endif // TESTCASE2_H

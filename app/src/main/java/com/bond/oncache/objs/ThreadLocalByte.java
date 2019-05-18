@@ -16,4 +16,5 @@ public class ThreadLocalByte {
           return new Integer(0);
         }
       };
+
 }

@@ -19,6 +19,8 @@ class TestPresenter {
  public:
   int  jni_OnLoad(JavaVM* vm);
   void  setNDKtestCaseInt3(jint  *cData, jint  rawDataLen);
+  void  setNDKtestCaseKeyString(const char * strData,  jsize  strLen,
+      jint  maxItems);
   void  warmUP(jint  cppTesterID, jint  capacity);
   void  doTest(int32_t  insert_threads,
                int32_t  search_threads,  int32_t  max_items);

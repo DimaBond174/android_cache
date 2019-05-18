@@ -8,23 +8,21 @@
 
 #ifndef TESTONCACHESMRU2_H
 #define TESTONCACHESMRU2_H
-#include  "i/itester.h"
-#include  "caches/oncachesmru.h"
-#include  "i/ikey2.h"
 
+#include  "../i/itester.h"
+#include "../i/ikey2.h"
+#include "../caches/oncachesmru.h"
 
 class TestOnCacheSMRU2 : public IAlgorithmTester {
 public:
  TestOnCacheSMRU2();
  ~TestOnCacheSMRU2() override;
- void  onStart(std::shared_ptr<IConfig>  &cfg)  override;
- void  onStop()  override;
- void  insert(void  *elem)  override;
- bool  exist(void  *elem)  override;
- const char *  get_algorithm_name()  override;
+  void  onStart(int32_t capacity)  override ;
+  void  onStop()  override;
+  int  get_key_type()  override ;
+  void  insert(void  *elem)  override;
+  bool  exist(void  *elem)  override;
 private:
- //using TKey  =  NSizeKey<ElemNSizeKey::key_ElemNSizeKey_size>;
- //using Elem  =  ElemNSizeKey;
  OnCacheSMRU<ElemNSizeKey *, ElemNSizeKey *>  *cache  =  nullptr;
 };
 

@@ -137,7 +137,12 @@ public class WEditNumber extends FrameLayout  implements IParamEditor {
         return String.valueOf(curValue);
     }
 
-    @Override
+  @Override
+  public void set_current_value(String val) {
+
+  }
+
+  @Override
     public String get_param_name() {
         return param.caption;
     }

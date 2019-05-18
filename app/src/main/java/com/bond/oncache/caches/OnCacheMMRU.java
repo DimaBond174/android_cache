@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /*
  * Most used cache,  multithreaded (thread safe)
  * Those who are more actively used are more likely to survive the recircle.
+ *  It used thread local landscape pointer
  *
  * Usage:
  *  OnCacheMMRU<>( capacity,  uselessness)
@@ -87,6 +88,7 @@ public class OnCacheMMRU<K extends IKey, V>  {
         landscape_l[i]  =  0;
       }
     }
+
     //new hash head always 2 hardcoded landscape_l[0]  =  2;
     landscape_l[255]  =  2;
 
@@ -380,7 +382,6 @@ public class OnCacheMMRU<K extends IKey, V>  {
       new_node.fwdPtrH  =  cur.fwdPtrH;
       cur.fwdPtrH  =  null;
       new_node.curHeight  =  2;
-      //cur.curHeight  =  landscape_l[get_land_l_p()++];
       cur.curHeight  =  landscape_l[land_l_p.getNextByte()];
       for (int  i  =  0; i  <=  2;  ++i)  {
         if (cur.curHeight  >=  i)  {

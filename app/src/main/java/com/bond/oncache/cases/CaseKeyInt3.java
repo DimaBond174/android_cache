@@ -306,36 +306,11 @@ public class CaseKeyInt3  implements ITestCase {
     long  provide1CppTest(ITester cur_tester, int  cur_max_items, int capacity )  {
       //Warm up:
       cur_tester.onStart(capacity,  cfg);
-      testerThreads.add(
-          new  CppThread(insert_threads,  search_threads, cur_max_items));
-      int  len  =  keys.length;
-      int  i = 0;
-      while (keep_run  &&  len > 0  && i < cur_max_items) {
-        --len;
-        ++i;
-        cur_tester.insert(keys[len]);
-      }  //  Warm up
-
-      //CppThread
-      //Go testing:
-      CyclicBarrier barrier = new CyclicBarrier(insert_threads + search_threads);
-      for ( i  = 0; keep_run  &&  i < insert_threads; ++i) {
-        testerThreads.add(
-            new InsertThread(keys, cur_max_items, barrier, cur_tester));
-      }
-
-      for ( i  = 0; keep_run  &&  i < search_threads; ++i) {
-        testerThreads.add(
-            new SearchThread(keys, cur_max_items, barrier, cur_tester));
-      }
-
+      CppThread  thread  =  new CppThread(insert_threads,  search_threads, cur_max_items);
+      testerThreads.add(thread);
       long start_time = System.nanoTime();
-      for (ITesterThread test_thread : testerThreads) {
-        test_thread.start();
-      }
-      for (ITesterThread test_thread : testerThreads) {
-        test_thread.join();
-      }
+      thread.start();
+      thread.join();
       long stop_time =  System.nanoTime();
       cur_tester.onStop();
       return ((stop_time - start_time) / 1000);

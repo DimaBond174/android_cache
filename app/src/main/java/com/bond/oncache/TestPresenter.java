@@ -212,6 +212,7 @@ public class TestPresenter {
    */
   //public static native String stringFromJNI();
   public static native void setNDKtestCaseInt3(int  rawData[],  int  rawDataLen);
+  public static native void setNDKtestCaseKeyString(String  strData,  int  maxItems);
   public static native void warmUP(int cppTesterID,  int  capacity);
   public static native void runCppTest(int  insert_threads,
     int  search_threads,  int  max_items);

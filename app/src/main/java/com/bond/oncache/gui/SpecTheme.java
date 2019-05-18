@@ -15,6 +15,7 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 
 import com.bond.oncache.R;
 
@@ -65,6 +66,7 @@ public class SpecTheme {
     public static volatile int     STextSize    = 18;
     public static volatile int     InfoTextSize = 14;
     public static volatile int     ButtonTextSize = 28;
+    public static volatile int     SmallTextSize = 12;
 
     public static volatile int     PTextColor   = 0xff000000; //Чёрный
     public static volatile int     STextColor   = 0xff696969; //Тёмно серый
@@ -85,6 +87,7 @@ public class SpecTheme {
     //public static volatile int dpButtonSize20      = 20; //Полкартинки
     public static volatile int dpButtonBigImgSizeOut  = 46; //Вся кнопка
     public static volatile int dpButtonImgSize     = 36; //dp Рисованная картинка на кнопке
+    public static volatile int dpButtonImgSizeSpec     = 36; //Spec for dpButtonImgSize
     public static volatile int dpButtonSmImgSize   = 24; //dp Маленькая картинка в менюхе
     public static volatile int dpButtonImgSizeHalf = 18; //Пол картинки
     public static volatile int dpButtonPadding   = 8; //dp  Отступы картинки
@@ -210,6 +213,8 @@ public class SpecTheme {
         SpecTheme.dpButtonTouchSize = (int) Math.ceil(SpecTheme.ButtonTouchSize * den);
         SpecTheme.dpAvaIconSize     = (int) Math.ceil(SpecTheme.AvaIconSize * den);
         SpecTheme.dpButtonImgSize   = (int) Math.ceil(SpecTheme.ButtonImgSize * den);
+        SpecTheme.dpButtonImgSizeSpec  = View.MeasureSpec.makeMeasureSpec(SpecTheme.dpButtonImgSize,
+            View.MeasureSpec.EXACTLY);
         SpecTheme.dpButtonBigImgSizeIn = (int) Math.ceil(SpecTheme.ButtonBigImgSizeIn * den);
         //SpecTheme.dpButtonSize20       = (int) Math.ceil(SpecTheme.ButtonSize20 * den);
         SpecTheme.dpButtonBigImgSizeOut = (int) Math.ceil(SpecTheme.ButtonBigImgSizeOut * den);

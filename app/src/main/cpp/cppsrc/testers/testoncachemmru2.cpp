@@ -7,7 +7,6 @@
  */
 
 #include "testoncachemmru2.h"
-#include "spec/specstatic.h"
 #include <memory>
 
 TestOnCacheMMRU2::TestOnCacheMMRU2()
@@ -15,17 +14,8 @@ TestOnCacheMMRU2::TestOnCacheMMRU2()
 
 }
 
-
 TestOnCacheMMRU2::~TestOnCacheMMRU2() {
   onStop();
-}
-
-void  TestOnCacheMMRU2::onStart(std::shared_ptr<IConfig>  &cfg)  {
-  int64_t  capacity  = cfg.get()->getLongValue("capacity");
-  assert(capacity > 0);
-  onStop() ;
-  cache  =  new OnCacheMMRU<ElemNSizeKey *, ElemNSizeKey *>(capacity,  10);
-  return;
 }
 
 void  TestOnCacheMMRU2::onStop()  {
@@ -35,6 +25,13 @@ void  TestOnCacheMMRU2::onStop()  {
   }
   return;
 }
+
+void  TestOnCacheMMRU2::onStart(int32_t capacity)  {
+  onStop() ;
+  cache  =  new OnCacheMMRU<ElemNSizeKey *, ElemNSizeKey *>(capacity,  10);
+  return;
+}
+
 
 void  TestOnCacheMMRU2::insert(void  *elem)  {
   ElemNSizeKey  *e  =  static_cast<ElemNSizeKey *>(elem);
@@ -52,7 +49,6 @@ bool  TestOnCacheMMRU2::exist(void  *elem)  {
   return  re;
 }
 
-const char *  TestOnCacheMMRU2::get_algorithm_name()  {
-  static ConstString my_name("OnCacheMMRU");
-  return  my_name.c_str;
-}
+int  TestOnCacheMMRU2::get_key_type()  {  return  1;  }
+
+

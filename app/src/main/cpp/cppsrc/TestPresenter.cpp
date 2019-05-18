@@ -8,9 +8,13 @@
 
 #include "TestPresenter.h"
 #include "cases/testcase1.h"
+#include "cases/testcase2.h"
 #include "testers/testoncachesmru.h"
 #include "testers/testoncachemlru.h"
 #include "testers/testoncachemmru.h"
+#include "testers/testoncachesmru2.h"
+#include "testers/testoncachemlru2.h"
+#include "testers/testoncachemmru2.h"
 
 int  TestPresenter::jni_OnLoad(JavaVM* vm)  {
   return jniHelper.jni_OnLoad(vm);
@@ -20,6 +24,11 @@ int  TestPresenter::jni_OnLoad(JavaVM* vm)  {
 void  TestPresenter::setNDKtestCaseInt3(jint  *cData, jint  rawDataLen)  {
   set_test_case(std::make_shared<TestCase1>(cData, rawDataLen));
 }  //  setNDKtestCaseInt3
+
+void  TestPresenter::setNDKtestCaseKeyString(const char * strData,
+    jsize  strLen,  jint  maxItems)  {
+  set_test_case(std::make_shared<TestCase2>(strData,  strLen,  maxItems));
+}
 
 std::shared_ptr<ITestCase> TestPresenter::get_test_case()  {
   std::shared_lock<std::shared_mutex> lk(test_case_mutex);
@@ -48,6 +57,15 @@ void  TestPresenter::warmUP(jint  cppTesterID,  jint  capacity)  {
         break;
       case 2:
         tester = std::make_shared<TestOnCacheMMRU>();
+        break;
+      case 3:
+        tester = std::make_shared<TestOnCacheSMRU2>();
+        break;
+      case 4:
+        tester = std::make_shared<TestOnCacheMLRU2>();
+        break;
+      case 5:
+        tester = std::make_shared<TestOnCacheMMRU2>();
         break;
       default:
         break;

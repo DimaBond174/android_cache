@@ -38,7 +38,7 @@ class TestCase1  :  public ITestCase {
   std::shared_ptr<IAlgorithmTester>  cur_tester;
   std::shared_mutex  cur_tester_mutex;
   std::atomic_bool  keep_run {  true };
-  std::atomic_int32_t  tester_run_id { 0 };
+  std::atomic_uint32_t  tester_run_id { 0 };
   Semaphore  semaphore;
 
   void  set_cur_tester(std::shared_ptr<IAlgorithmTester>  _cur_tester);
@@ -46,12 +46,12 @@ class TestCase1  :  public ITestCase {
 
   class ParamsPack {
    public:
-    ParamsPack(int32_t  _max_items, int32_t  _my_run_id,
+    ParamsPack(int32_t  _max_items, uint32_t  _my_run_id,
                const std::shared_ptr<IAlgorithmTester>  &_cur_tester)
         : max_items(_max_items),  my_run_id(_my_run_id),
           cur_tester(_cur_tester)  {  }
     const int32_t  max_items;
-    const int32_t  my_run_id;
+    const uint32_t  my_run_id;
     std::shared_ptr<IAlgorithmTester>  cur_tester;
   };
 

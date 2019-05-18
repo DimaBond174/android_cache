@@ -71,6 +71,11 @@ public class UiMainFrag extends UiFragment   {
     return TestPresenter.getRstring(R.string.strUiMainFrag);
   }
 
+  @Override
+  public long getType() {
+    return 0;
+  }
+
   public UiMainFrag(Context context, FragmentKey fragmentKey) {
     super(context, fragmentKey);
 

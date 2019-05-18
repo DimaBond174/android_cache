@@ -60,6 +60,11 @@ public class UiHistoryFrag extends UiFragment   {
     return TestPresenter.getRstring(R.string.strUiHistoryFrag);
   }
 
+  @Override
+  public long getType() {
+    return 0;
+  }
+
   public UiHistoryFrag(Context context, FragmentKey fragmentKey) {
     super(context, fragmentKey);
 

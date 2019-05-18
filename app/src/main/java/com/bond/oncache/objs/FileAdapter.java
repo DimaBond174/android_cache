@@ -8,7 +8,17 @@ package com.bond.oncache.objs;
  * feel free to contact me: specnet.messenger@gmail.com
  */
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -62,6 +72,140 @@ public class FileAdapter {
     return re;
   }
 
+  public static String getFileFullPath(Uri uri,  Context context) {
+    if (null  !=  uri) {
+      String uriString = uri.toString();
+      if (uriString.startsWith("file://")) {
+        return (new File(uriString)).getAbsolutePath();
+      }  else {
+        //Oh Android
+        Cursor cursor = null;
+        try {
+          String[] proj = { MediaStore.Images.Media.DATA };
+          cursor = context.getContentResolver().query(uri, proj, null, null, null);
+          int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+          cursor.moveToFirst();
+          return cursor.getString(column_index);
+        } finally {
+          if (cursor != null) {
+            cursor.close();
+          }
+        }
+      }
+    }
+    return "";
+  }
+
+  public static String getFileName(Uri uri,  AppCompatActivity activity)  {
+    String uriString  =  uri.toString();
+    String displayName  =  "";
+    if (uriString.startsWith("content://"))  {
+      Cursor cursor = null;
+      try {
+        cursor = activity.getContentResolver().query(uri, null, null, null, null);
+        if (cursor  !=  null) {
+          if (cursor.moveToFirst()) {
+            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+          }
+          cursor.close();
+        }
+      } catch (Exception e) {}
+    } else if (uriString.startsWith("file://"))  {
+      File myFile = new File(uriString);
+      //String path = myFile.getAbsolutePath();
+      displayName = myFile.getName();
+    }
+    return displayName;
+  }
+
+    public static boolean checkStoragePermissionGranted(Activity context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if  (PackageManager.PERMISSION_GRANTED
+          != context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE))  {
+        ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            StaticConsts.RQS_GET_PERMITIONS);
+        return false;
+      }
+    }
+    return  true;
+  }
+
+  public static String getFileFromURI(AppCompatActivity activity, Uri mediaUri, String defFileName){
+    String re = getFileFullPath(mediaUri, activity);
+    if (!re.isEmpty()) {
+      try {
+        if (null != mediaUri) {
+          InputStream inputStream = activity.getBaseContext().getContentResolver().openInputStream(mediaUri);
+          String fileName = FileAdapter.getFileName(mediaUri, activity);
+          if (fileName.isEmpty()) {
+            fileName = defFileName;
+          }
+          StringBuilder sb  = new StringBuilder(256);
+          sb.append(activity.getFilesDir().getPath()).append("/specnet");
+          if (FileAdapter.saveFileI(sb.toString(), fileName, inputStream)) {
+            sb.append(File.separatorChar).append(fileName);
+            re = sb.toString();
+          }
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "getFileFromURI error:", e);
+      }
+    }
+    return re;
+  }
+
+  public static boolean saveFileI(String dir, String file, InputStream inputStream) {
+    boolean re  =  false;
+    final int buffer_size = 4096;
+    try {
+      File fdir = getDir(dir);
+      if (null  !=  fdir) {
+        File f = new File(fdir,file);
+
+        if (f.exists()) {
+          f.delete();
+        }
+        f.createNewFile();
+        FileOutputStream fOut = new FileOutputStream(f);
+        byte[] bytes = new byte[buffer_size];
+        for (int count=0;count!=-1;) {
+          count = inputStream.read(bytes);
+          if(count != -1) {
+            fOut.write(bytes, 0, count);
+          }
+        }
+        fOut.flush();
+        inputStream.close();
+        fOut.close();
+        re=true;
+      }
+    } catch (Exception e) {
+      Log.e(TAG,"saveFile err:"+dir+"/"+file,e);
+    }
+    return re;
+  }
+
+  public static String getFileName(String fullPath) {
+    int index = fullPath.lastIndexOf('/');
+    return fullPath.substring(index + 1);
+  }
+
+  public static File getDir(String path) {
+    File re=null;
+    try {
+      File newDir = new File(path);
+      if (newDir.exists()) {
+        re=newDir;
+      } else {
+        if (newDir.mkdirs()) {
+          re=newDir;
+        }
+      }
+    } catch (Exception e) {
+      Log.e(TAG,"Fail to create work dir:"+path);
+    }
+    return re;
+  }
 
   public static String readFile(String file, Context context)  {
     String  re  =  readFile(file);

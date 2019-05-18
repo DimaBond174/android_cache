@@ -4,7 +4,11 @@ import android.view.Menu;
 
 public class StaticConsts {
   public static final int START_ITEMS  =  1000;
-  public static final int MAX_INT =   2147000647;
+  public static final int MAX_INT  =  2147000647;
+
+  public static final int RQS_GET_PERMITIONS  =  1;
+  public static final int RQS_GET_CONTENT  =  2;
+  public static final int FrgActivityForResult  =  1;
 
   public static final String PARM_test_case = "test case";
   public static final String PARM_insert_threads = "insert threads";
@@ -15,6 +19,7 @@ public class StaticConsts {
   public static final String PARM_testers = "testers";
   public static final String PARM_1tester = "tester";
   public static final String PARM_results = "results";
+  public static final String PARM_string_keys = "string keys";
 
   public static final String  json_params[] = new String[] {
       PARM_test_case,

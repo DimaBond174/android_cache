@@ -67,6 +67,20 @@ JNIEXPORT void JNICALL Java_com_bond_oncache_TestPresenter_stopCppTest  (
   return;
 }  //  stopCppTest
 
+JNIEXPORT void JNICALL
+Java_com_bond_oncache_TestPresenter_setNDKtestCaseKeyString (
+    JNIEnv *env,
+    jobject /* this */,
+    jstring strData,
+    jint  maxItems)
+{
+  const char *c_data = env->GetStringUTFChars(strData, 0);
+  jsize data_len = env->GetStringUTFLength(strData);
+  testPresenter.setNDKtestCaseKeyString(c_data, data_len, maxItems);
+  env->ReleaseStringUTFChars(strData, c_data);
+  return;
+}  //  setNDKtestCaseKeyString
+
 #ifdef __cplusplus
 }
 #endif

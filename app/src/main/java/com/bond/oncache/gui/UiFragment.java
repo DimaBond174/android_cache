@@ -45,26 +45,15 @@ public abstract class UiFragment extends FrameLayout implements View.OnClickList
     public abstract boolean onSelectLocalMenu(int menu_item_id);
     public abstract Drawable getFABicon();
     public abstract void onFABclick();
-
-//    public abstract void setAnswerMessage(MsgTemplate msg);
-//
-//    /* Демонстрация сообщений об ошибках */
-//    public void showErrorDlg(String title, String errMsg){
-//        //UiRoot.getInstance().getForDialogCtx().getResources()
-//        //        .getString(R.string.str_err_sns_id_off)
-//        //UiRoot.getInstance().showErrorDlg(getTitle(), errMsg);
-//        UiRoot.showErrorDlg(title, errMsg);
-//    }
+    public abstract long getType();
 
 
     public void onStop() {
         guiOnScreen=false;
-        //MessageLogger.getPrefs(getActivity()).unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     public void onPause() {
         guiOnScreen=false;
-        //MessageLogger.getPrefs(getActivity()).unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     public void onResume() {

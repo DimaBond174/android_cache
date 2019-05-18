@@ -37,6 +37,16 @@ public class RegistryTesters {
       new TCppOnCacheMLRUKeyInt3(),
       new TCppOnCacheMMRUKeyInt3(),
       new TOnCacheMLRUKeyInt3(),
-      new TOnCacheMMRUKeyInt3()
+      new TOnCacheMMRUKeyInt3(),
+      new TAndroidLRUKeyString(),
+      new TGuavaCacheKeyString(),
+      new TOnCacheMMRUKeyString(),
+      new TOnCacheSMRUKeyString(),
+      new TOnCacheMLRUKeyString(),
+      new TCppOnCacheSMRUKeyString(),
+      new TCppOnCacheMLRUKeyString(),
+      new TCppOnCacheMMRUKeyString(),
+      new TOnCacheMMRUKeyInt3V(),
+      new TOnCacheMMRUKeyStringV()
   };
 }

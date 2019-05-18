@@ -46,6 +46,11 @@ public class WEditBool extends FrameLayout  implements IParamEditor {
     }
 
     @Override
+    public void set_current_value(String val) {
+
+    }
+
+    @Override
     public String get_param_name() {
         return param.caption;
     }

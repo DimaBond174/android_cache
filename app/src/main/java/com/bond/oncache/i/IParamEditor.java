@@ -9,5 +9,6 @@ package com.bond.oncache.i;
 
 public interface IParamEditor {
   String get_current_value();
+  void set_current_value(String  val);
   String get_param_name();
 }

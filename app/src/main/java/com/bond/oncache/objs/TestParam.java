@@ -5,6 +5,7 @@ public class TestParam {
   public static final int TYPE_NUM  = 1;
   public static final int TYPE_ITEMS  = 2;
   public static final int TYPE_STRINGS  = 3;
+  public static final int TYPE_FILE  = 3;
   public final int  type;
   public final String caption;
   public final int min_value;

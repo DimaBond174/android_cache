@@ -8,6 +8,7 @@ package com.bond.oncache;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,7 +29,9 @@ import com.bond.oncache.gui.UiFragment;
 import com.bond.oncache.gui.UiHistoryFrag;
 import com.bond.oncache.gui.UiMainFrag;
 import com.bond.oncache.gui.UiSettingsFrag;
+import com.bond.oncache.i.IActivityForResult;
 import com.bond.oncache.i.IView;
+import com.bond.oncache.objs.ByteUtils;
 import com.bond.oncache.objs.StaticConsts;
 
 import java.util.ArrayDeque;
@@ -181,6 +184,19 @@ public class MainActivity extends AppCompatActivity implements IView {
     if  (null  !=  fragTAG)  {
       setCurActiveFrag(new FragmentKey(fragTAG));
     }//if (null!=fragTAG)
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == StaticConsts.RQS_GET_CONTENT )  {
+      if (null  !=  curActiveFrag)  {
+        if (ByteUtils.getFlag(curActiveFrag.getType(), StaticConsts.FrgActivityForResult))  {
+          ((IActivityForResult) curActiveFrag).resultActivityForResult(this, requestCode, resultCode, data);
+        }
+      }
+    }  else  {
+      super.onActivityResult(requestCode, resultCode, data);
+    }
   }
 
   private void setCurActiveFrag(FragmentKey key)  {
