@@ -130,26 +130,26 @@ public class FileAdapter {
     return  true;
   }
 
+
   public static String getFileFromURI(AppCompatActivity activity, Uri mediaUri, String defFileName){
     String re = getFileFullPath(mediaUri, activity);
-    if (!re.isEmpty()) {
-      try {
-        if (null != mediaUri) {
-          InputStream inputStream = activity.getBaseContext().getContentResolver().openInputStream(mediaUri);
-          String fileName = FileAdapter.getFileName(mediaUri, activity);
-          if (fileName.isEmpty()) {
-            fileName = defFileName;
-          }
-          StringBuilder sb  = new StringBuilder(256);
-          sb.append(activity.getFilesDir().getPath()).append("/specnet");
-          if (FileAdapter.saveFileI(sb.toString(), fileName, inputStream)) {
-            sb.append(File.separatorChar).append(fileName);
-            re = sb.toString();
-          }
+    try {
+      String fileName = defFileName;
+      if (null != re  &&  !re.isEmpty()) {
+        fileName = FileAdapter.getFileName(mediaUri, activity);
+        if (fileName.isEmpty()) {
+          fileName = defFileName;
         }
-      } catch (Exception e) {
-        Log.e(TAG, "getFileFromURI error:", e);
       }
+      InputStream inputStream = activity.getBaseContext().getContentResolver().openInputStream(mediaUri);
+      StringBuilder sb  = new StringBuilder(256);
+      sb.append(activity.getFilesDir().getPath()).append("/specnet");
+      if (FileAdapter.saveFileI(sb.toString(), fileName, inputStream)) {
+        sb.append(File.separatorChar).append(fileName);
+        re = sb.toString();
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "getFileFromURI():", e);
     }
     return re;
   }
